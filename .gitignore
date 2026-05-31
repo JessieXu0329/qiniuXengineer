@@ -1,6 +1,7 @@
 # Dependencies
 /frontend/node_modules/
 /frontend/dist/
+/frontend/.vite/
 
 # Executables & Binaries
 /backend/ai-pr-reviewer.exe
