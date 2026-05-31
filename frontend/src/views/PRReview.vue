@@ -397,6 +397,7 @@ const initRadarChart = (isPrint = false) => {
   myChart = echarts.init(radarChartRef.value)
   const option = {
     backgroundColor: 'transparent',
+    animation: !isPrint,
     tooltip: {
       show: !isPrint,
       trigger: 'item',
@@ -1212,7 +1213,9 @@ onUnmounted(() => {
 .menu-item-btn .icon {
   font-size: 14px;
 }
+</style>
 
+<style>
 /* ==========================================
    HIGH-FIDELITY VECTOR PDF PRINT STYLES 
    ========================================== */
