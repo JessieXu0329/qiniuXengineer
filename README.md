@@ -68,9 +68,9 @@ docker-compose up -d
 > **注意**：容器启动后，将自动监听本地 `3306` (MySQL) 和 `6379` (Redis) 端口。
 
 ### 第二步：运行 Go 后端服务
-1. 进入 `server` 目录：
+1. 进入 `backend` 目录：
    ```bash
-   cd server
+   cd backend
    ```
 2. 配置环境变量（或在前端 Engine Config 页面配置）：
    ```bash
@@ -89,9 +89,9 @@ docker-compose up -d
    > 服务将监听 `http://localhost:8080`。当看到 `GORM tables successfully migrated` 时，说明数据库已成功完成 schema 初始化！
 
 ### 第三步：运行 Vue 前端服务
-1. 打开新的终端，进入 `web` 目录：
+1. 打开新的终端，进入 `frontend` 目录：
    ```bash
-   cd web
+   cd frontend
    ```
 2. 安装项目依赖：
    ```bash

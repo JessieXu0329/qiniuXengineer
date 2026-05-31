@@ -14,7 +14,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       # Automatically initialize DB schema on startup if desired
-      # - ./server/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
     networks:
       - aipr-network

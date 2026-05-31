@@ -1,17 +1,17 @@
 # Dependencies
-/web/node_modules/
-/web/dist/
+/frontend/node_modules/
+/frontend/dist/
 
 # Executables & Binaries
-/server/ai-pr-reviewer.exe
+/backend/ai-pr-reviewer.exe
 *.exe
 *.bin
 *.out
 
 # Logs
 *.log
-/server/*.log
-/web/*.log
+/backend/*.log
+/frontend/*.log
 
 # OS / IDE
 .DS_Store
