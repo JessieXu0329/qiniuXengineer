@@ -23,3 +23,7 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Local Caching / IDE cache
+/frontend/.vite/
+

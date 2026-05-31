@@ -523,8 +523,8 @@ const triggerPdfExport = (targetLang) => {
   document.body.classList.add('printing-' + targetLang)
   
   nextTick(() => {
-    // Redraw ECharts immediately with target language text
-    initRadarChart()
+    // Redraw ECharts immediately with target language text and high contrast print theme
+    initRadarChart(true)
     
     // Tiny delay to ensure charts are fully rendered before printing
     setTimeout(() => {
@@ -1220,6 +1220,17 @@ onUnmounted(() => {
    HIGH-FIDELITY VECTOR PDF PRINT STYLES 
    ========================================== */
 @media print {
+  /* 0. Universal print reset: disable animations, transitions, and force full opacity */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    filter: none !important;
+  }
+
   /* 1. Hide interactive/navigation elements entirely */
   .cyber-sidebar,
   .cyber-navbar,
@@ -1227,17 +1238,15 @@ onUnmounted(() => {
   .input-card,
   .export-pdf-dropdown,
   .copy-btn,
-  .card-glow {
+  .card-glow,
+  .cyber-grid-overlay {
     display: none !important;
   }
 
-  /* 2. Format basic layout for paper */
-  body, html {
-    background: #ffffff !important;
-    color: #000000 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-  }
-
+  /* 2. Format basic layout for paper and avoid collapsing containers */
+  #app,
+  body,
+  html,
   .cyber-container,
   .cyber-main,
   .main-layout,
@@ -1277,6 +1286,8 @@ onUnmounted(() => {
     margin-bottom: 25px !important;
     padding: 20px !important;
     page-break-inside: avoid !important;
+    backdrop-filter: none !important;
+    filter: none !important;
   }
 
   .card-content {
