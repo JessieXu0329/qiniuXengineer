@@ -31,11 +31,11 @@
               <span>DeepSeek-V3 (Standard)</span>
             </button>
             <button 
-              :class="['engine-tab-btn', { active: selectedModelId === 'deepseek-r1' }]"
-              @click="switchModel('deepseek-r1')"
+              :class="['engine-tab-btn', { active: selectedModelId === 'gpt-plus' }]"
+              @click="switchModel('gpt-plus')"
             >
-              <span class="pulse-cyan" v-if="selectedModelId === 'deepseek-r1'"></span>
-              <span>DeepSeek-R1 (Reasoning)</span>
+              <span class="pulse-cyan" v-if="selectedModelId === 'gpt-plus'"></span>
+              <span>GPT PLUS</span>
             </button>
           </div>
         </div>
@@ -274,8 +274,12 @@ const switchModel = (id) => {
   selectedModelId.value = id
   let baseUrl = 'https://api.deepseek.com/v1'
   let enforcedModel = 'deepseek-chat'
-  if (id === 'deepseek-r1') {
-    enforcedModel = 'deepseek-reasoner'
+  if (id === 'gpt-plus') {
+    baseUrl = 'https://api.openai.com/v1'
+    enforcedModel = 'gpt-4o'
+    localStorage.setItem('apiKey', 'sk-7c22836d86108bbca8f5d6f14855fe9bf41e980b6273e83548a199a389ea920a')
+  } else {
+    localStorage.removeItem('apiKey')
   }
   localStorage.setItem('baseUrl', baseUrl)
   localStorage.setItem('enforcedModel', enforcedModel)
@@ -556,8 +560,13 @@ const closeExportMenu = () => {
 onMounted(async () => {
   window.addEventListener('click', closeExportMenu)
 
-  if (localStorage.getItem('selectedModelId')) {
-    selectedModelId.value = localStorage.getItem('selectedModelId')
+  const savedModel = localStorage.getItem('selectedModelId')
+  if (savedModel) {
+    if (savedModel === 'deepseek-r1') {
+      switchModel('gpt-plus')
+    } else {
+      selectedModelId.value = savedModel
+    }
   } else {
     switchModel('deepseek-v3')
   }
