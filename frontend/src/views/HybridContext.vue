@@ -3,12 +3,12 @@
     <!-- Top Header -->
     <div class="welcome-banner">
       <div class="welcome-text">
-        <h2>{{ t[currentLang].header }}</h2>
-        <p>{{ t[currentLang].subHeader }}</p>
+        <h2>{{ t('context.header') }}</h2>
+        <p>{{ t('context.subHeader') }}</p>
       </div>
       <div class="system-time">
         <span class="pulse-green"></span>
-        <span class="clock">{{ t[currentLang].status }}</span>
+        <span class="clock">{{ t('context.status') }}</span>
       </div>
     </div>
 
@@ -19,18 +19,18 @@
         <div class="overlay-details">
           <div class="tech-icon"><el-icon><Share /></el-icon></div>
           <div class="details-text">
-            <h3>{{ t[currentLang].bannerTitle }}</h3>
-            <p>{{ t[currentLang].bannerDesc }}</p>
+            <h3>{{ t('context.bannerTitle') }}</h3>
+            <p>{{ t('context.bannerDesc') }}</p>
           </div>
         </div>
         <div class="overlay-stats">
           <div class="stat-node">
             <span class="value">14</span>
-            <span class="label">{{ t[currentLang].statLabel1 }}</span>
+            <span class="label">{{ t('context.statLabel1') }}</span>
           </div>
           <div class="stat-node">
             <span class="value">96.8%</span>
-            <span class="label">{{ t[currentLang].statLabel2 }}</span>
+            <span class="label">{{ t('context.statLabel2') }}</span>
           </div>
         </div>
       </div>
@@ -42,8 +42,8 @@
         <div class="cyber-card timeline-card">
           <div class="card-glow"></div>
           <div class="card-content">
-            <h3>{{ t[currentLang].timelineTitle }}</h3>
-            <p class="subtitle">{{ t[currentLang].timelineSub }}</p>
+            <h3>{{ t('context.timelineTitle') }}</h3>
+            <p class="subtitle">{{ t('context.timelineSub') }}</p>
             
             <div class="timeline-wrapper">
               <div v-for="(item, index) in injections" :key="index" class="timeline-item">
@@ -54,7 +54,7 @@
                     <span class="timestamp">{{ item.time }}</span>
                   </div>
                   <h4 class="item-title">{{ item.title }}</h4>
-                  <p class="item-desc">{{ currentLang === 'zh' ? item.descZh : item.desc }}</p>
+                  <p class="item-desc">{{ lang === 'zh' ? item.descZh : item.desc }}</p>
                 </div>
               </div>
             </div>
@@ -67,8 +67,8 @@
         <div class="cyber-card graph-card">
           <div class="card-glow"></div>
           <div class="card-content">
-            <h3>{{ t[currentLang].graphTitle }}</h3>
-            <p class="subtitle">{{ t[currentLang].graphSub }}</p>
+            <h3>{{ t('context.graphTitle') }}</h3>
+            <p class="subtitle">{{ t('context.graphSub') }}</p>
 
             <!-- ECharts Interactive AST Relation Graph Container -->
             <div class="ast-board">
@@ -79,29 +79,29 @@
             <!-- Inspect Panel Details -->
             <div class="inspect-panel" v-if="activeNode">
               <div class="inspect-header">
-                <h4>{{ t[currentLang].inspectTitle }}: {{ activeNode.name }}</h4>
-                <span :class="['node-badge', activeNode.status]">{{ currentLang === 'zh' ? activeNode.impactZh : activeNode.impact }}</span>
+                <h4>{{ t('context.inspectTitle') }}: {{ activeNode.name }}</h4>
+                <span :class="['node-badge', activeNode.status]">{{ lang === 'zh' ? activeNode.impactZh : activeNode.impact }}</span>
               </div>
               <div class="inspect-body">
                 <div class="meta-row">
-                  <span class="label">{{ t[currentLang].colPath }}:</span>
+                  <span class="label">{{ t('context.colPath') }}:</span>
                   <span class="value code">{{ activeNode.path }}</span>
                 </div>
                 <div class="meta-row">
-                  <span class="label">{{ currentLang === 'zh' ? '角色类型' : 'NodeType' }}:</span>
-                  <span class="value type-tag">{{ currentLang === 'zh' ? activeNode.typeZh : activeNode.type }}</span>
+                  <span class="label">{{ t('context.nodeTypeLabel') }}:</span>
+                  <span class="value type-tag">{{ lang === 'zh' ? activeNode.typeZh : activeNode.type }}</span>
                 </div>
                 <div class="meta-row">
-                  <span class="label">{{ t[currentLang].colExports }}:</span>
+                  <span class="label">{{ t('context.colExports') }}:</span>
                   <span class="value code exports">{{ activeNode.exports }}</span>
                 </div>
                 <div class="meta-row">
-                  <span class="label">{{ t[currentLang].colLinks }}:</span>
+                  <span class="label">{{ t('context.colLinks') }}:</span>
                   <span class="value warning">{{ activeNode.links }}</span>
                 </div>
                 <div class="meta-row desc-row">
-                  <span class="label">{{ currentLang === 'zh' ? '安全影响剖析' : 'Security Impact Analysis' }}:</span>
-                  <p class="desc-text">{{ currentLang === 'zh' ? activeNode.descZh : activeNode.desc }}</p>
+                  <span class="label">{{ t('context.impactLabel') }}:</span>
+                  <p class="desc-text">{{ lang === 'zh' ? activeNode.descZh : activeNode.desc }}</p>
                 </div>
               </div>
             </div>
@@ -113,49 +113,13 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
+import { useI18n } from '@/i18n'
 import * as echarts from 'echarts'
 
-const currentLang = inject('lang', ref('zh'))
+const { t, lang } = useI18n()
 const chartRef = ref(null)
 let myChart = null
-
-const t = {
-  zh: {
-    header: "混合上下文检索器",
-    subHeader: "AST 语法解析、包路径规范约束发现以及超出 Diff 代码的关联认知叠加图层",
-    status: "认知图层已激活",
-    bannerTitle: "[当前扫描上下文配置文件: 认知图层已激活]",
-    bannerDesc: "分析器动态检索您的代码仓库边界。它不孤立地审查 Diff 行，而是提取父类、接口和包配置，为大模型评审流水线注入高精度的上下文背景参数。",
-    statLabel1: "已注入上下文锚点数",
-    statLabel2: "上下文精准度评分",
-    timelineTitle: "动态上下文注入时间线",
-    timelineSub: "在最近一次扫描期间执行依赖解析的按时序记录",
-    graphTitle: "AST 逻辑依赖连通网络与跨文件影响图",
-    graphSub: "实时 AST 关系连通性与跨文件调用链追踪图。点击节点可审查深层依赖安全指纹签名。",
-    inspectTitle: "节点详细依赖指纹签名",
-    colPath: "文件绝对路径",
-    colExports: "已发现导出 API",
-    colLinks: "关联网结依赖"
-  },
-  en: {
-    header: "HYBRID CONTEXT RETRIEVER",
-    subHeader: "AST parsing, package constraints discovery, and out-of-diff cognitive overlays",
-    status: "COGNITIVE OVERLAY ACTIVE",
-    bannerTitle: "[CURRENT SCAN CONTEXT PROFILE: COGNITIVE OVERLAY ACTIVE]",
-    bannerDesc: "The retriever scans your repository boundaries dynamically. Instead of isolating Diff lines, it extracts parent classes, interfaces, and packages configurations to feed high-fidelity context parameters to the LLM review pipeline.",
-    statLabel1: "Context Anchors Injected",
-    statLabel2: "Context Accuracy Score",
-    timelineTitle: "DYNAMIC CONTEXT INJECTION TIMELINE",
-    timelineSub: "Chronological footprint of dependency resolutions executed on last scanning event",
-    graphTitle: "AST LOGICAL DEPENDENCY LINKER & IMPACT SCOPE",
-    graphSub: "Live AST connection tree and cross-file call chains tracker. Click nodes to inspect detailed dependency fingerprints.",
-    inspectTitle: "NODE DETAILED SIGNATURE",
-    colPath: "Absolute Path",
-    colExports: "Discovered Exports",
-    colLinks: "Dependency Linkages"
-  }
-}
 
 const injections = ref([
   {
@@ -284,7 +248,7 @@ const initGraphChart = () => {
 
   myChart = echarts.init(chartRef.value)
 
-  const isZh = currentLang.value === 'zh'
+  const isZh = lang.value === 'zh'
 
   const seriesData = graphNodes.value.map(node => {
     let color = '#00f0ff'
@@ -348,7 +312,7 @@ const initGraphChart = () => {
       textStyle: { color: '#cbd5e1', fontSize: 11 },
       formatter: (params) => {
         if (params.dataType === 'edge') {
-          return isZh ? '跨文件 AST 调用依赖' : 'Cross-file AST Dependency'
+          return t('context.tooltipEdge')
         }
         const raw = params.data.raw
         return `
@@ -397,7 +361,7 @@ const initGraphChart = () => {
 }
 
 // Watch language state to swap axis and tooltips instantly
-watch(currentLang, () => {
+watch(lang, () => {
   nextTick(() => {
     initGraphChart()
   })

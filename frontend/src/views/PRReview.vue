@@ -3,12 +3,12 @@
     <!-- Top Header -->
     <div class="welcome-banner">
       <div class="welcome-text">
-        <h2>{{ t[currentLang].header }}</h2>
-        <p>{{ t[currentLang].subHeader }}</p>
+        <h2>{{ t('review.header') }}</h2>
+        <p>{{ t('review.subHeader') }}</p>
       </div>
       <div class="system-time">
         <span class="pulse-green"></span>
-        <span class="clock">{{ currentLang === 'zh' ? '扫描引擎就绪' : 'SCAN ENGINE READY' }}</span>
+        <span class="clock">{{ t('review.clockReady') }}</span>
       </div>
     </div>
 
@@ -16,12 +16,12 @@
     <div class="cyber-card input-card">
       <div class="card-glow"></div>
       <div class="card-content">
-        <h3>{{ t[currentLang].inputTitle }}</h3>
-        <p class="subtitle">{{ t[currentLang].inputSub }}</p>
+        <h3>{{ t('review.inputTitle') }}</h3>
+        <p class="subtitle">{{ t('review.inputSub') }}</p>
         
         <!-- Futuristic LLM Engine Selector -->
         <div class="engine-selector">
-          <span class="selector-label">{{ currentLang === 'zh' ? '审计引擎大脑:' : 'AUDIT ENGINE BRAIN:' }}</span>
+          <span class="selector-label">{{ t('review.engineLabel') }}</span>
           <div class="engine-tabs">
             <button 
               :class="['engine-tab-btn', { active: selectedModelId === 'deepseek-v3' }]"
@@ -29,13 +29,6 @@
             >
               <span class="pulse-cyan" v-if="selectedModelId === 'deepseek-v3'"></span>
               <span>DeepSeek-V3 (Standard)</span>
-            </button>
-            <button 
-              :class="['engine-tab-btn', { active: selectedModelId === 'gpt-plus' }]"
-              @click="switchModel('gpt-plus')"
-            >
-              <span class="pulse-cyan" v-if="selectedModelId === 'gpt-plus'"></span>
-              <span>GPT PLUS</span>
             </button>
           </div>
         </div>
@@ -56,7 +49,7 @@
             <span class="btn-glow"></span>
             <span class="btn-text">
               <el-icon v-if="loading" class="is-loading"><Loading /></el-icon>
-              <span v-else>{{ t[currentLang].btnText }}</span>
+              <span v-else>{{ t('review.btnText') }}</span>
             </span>
           </button>
         </div>
@@ -70,20 +63,20 @@
         <div class="cyber-card chart-card">
           <div class="card-glow"></div>
           <div class="card-content">
-            <h3>{{ t[currentLang].radarTitle }}</h3>
+            <h3>{{ t('review.radarTitle') }}</h3>
             <div ref="radarChartRef" class="radar-chart-container"></div>
             
             <div class="scores-grid">
               <div class="score-pill">
-                <span class="label">{{ t[currentLang].s1 }}</span>
+                <span class="label">{{ t('review.s1') }}</span>
                 <span class="val highlight">{{ reviewData.summary.overall_score }}</span>
               </div>
               <div class="score-pill">
-                <span class="label">{{ t[currentLang].s2 }}</span>
+                <span class="label">{{ t('review.s2') }}</span>
                 <span class="val security">{{ reviewData.summary.security_score }}</span>
               </div>
               <div class="score-pill">
-                <span class="label">{{ t[currentLang].s3 }}</span>
+                <span class="label">{{ t('review.s3') }}</span>
                 <span class="val performance">{{ reviewData.summary.performance_score }}</span>
               </div>
             </div>
@@ -93,14 +86,14 @@
         <div class="cyber-card summary-card">
           <div class="card-glow"></div>
           <div class="card-content">
-            <h3>{{ t[currentLang].summaryTitle }}</h3>
+            <h3>{{ t('review.summaryTitle') }}</h3>
             <div class="summary-section">
-              <h4>{{ t[currentLang].sum1 }}</h4>
-              <p class="summary-text">{{ currentLang === 'zh' ? (reviewData.summary.one_sentence_summary_zh || reviewData.summary.one_sentence_summary) : reviewData.summary.one_sentence_summary }}</p>
+              <h4>{{ t('review.sum1') }}</h4>
+              <p class="summary-text">{{ lang === 'zh' ? (reviewData.summary.one_sentence_summary_zh || reviewData.summary.one_sentence_summary) : reviewData.summary.one_sentence_summary }}</p>
             </div>
             
             <div class="summary-section">
-              <h4>{{ t[currentLang].sum2 }}</h4>
+              <h4>{{ t('review.sum2') }}</h4>
               <div class="tags-group">
                 <span v-for="mod in reviewData.summary.affected_modules" :key="mod" class="cyber-tag module-tag">
                   {{ mod }}
@@ -109,10 +102,10 @@
             </div>
 
             <div class="summary-section warning-box" v-if="reviewData.summary.breaking_changes?.length">
-              <h4>⚠️ {{ t[currentLang].sum3 }}</h4>
+              <h4>⚠️ {{ t('review.sum3') }}</h4>
               <ul>
                 <li v-for="(bc, index) in reviewData.summary.breaking_changes" :key="bc">
-                  {{ currentLang === 'zh' ? (reviewData.summary.breaking_changes_zh?.[index] || bc) : bc }}
+                  {{ lang === 'zh' ? (reviewData.summary.breaking_changes_zh?.[index] || bc) : bc }}
                 </li>
               </ul>
             </div>
@@ -126,25 +119,25 @@
           <div class="card-glow"></div>
           <div class="card-content">
             <div class="reviews-header">
-              <h3>{{ t[currentLang].cardsHeader }}</h3>
+              <h3>{{ t('review.cardsHeader') }}</h3>
               <div class="header-actions">
-                <span class="badge">{{ reviewData.summary.cards?.length || 0 }} {{ t[currentLang].issuesBadge }}</span>
+                <span class="badge">{{ reviewData.summary.cards?.length || 0 }} {{ t('review.issuesBadge') }}</span>
                 
                 <!-- Advanced PDF Export Button and Dropdown -->
                 <div class="export-pdf-dropdown">
                   <button class="export-btn" @click.stop="showExportMenu = !showExportMenu">
                     <el-icon><Download /></el-icon>
-                    <span>{{ currentLang === 'zh' ? '导出 PDF 报告' : 'EXPORT PDF' }}</span>
+                    <span>{{ t('review.exportPdf') }}</span>
                     <el-icon class="arrow-icon"><ArrowDown /></el-icon>
                   </button>
                   <div class="dropdown-menu animate-fade-in" v-if="showExportMenu">
                     <button class="menu-item-btn" @click="triggerPdfExport('zh')">
                       <span class="icon">🇨🇳</span>
-                      <span>中文 PDF 报告</span>
+                      <span>{{ t('review.exportZh') }}</span>
                     </button>
                     <button class="menu-item-btn" @click="triggerPdfExport('en')">
                       <span class="icon">🇺🇸</span>
-                      <span>English PDF Report</span>
+                      <span>{{ t('review.exportEn') }}</span>
                     </button>
                   </div>
                 </div>
@@ -165,22 +158,22 @@
                   </div>
                   <div class="card-file-line">
                     <span class="file">{{ card.file }}</span>
-                    <span class="line">{{ currentLang === 'zh' ? '行' : 'Line' }} {{ card.line }}</span>
+                    <span class="line">{{ t('review.line') }} {{ card.line }}</span>
                   </div>
                 </div>
 
                 <!-- Card Body -->
                 <div class="card-reason">
-                  {{ currentLang === 'zh' ? (card.reason_zh || card.reason) : card.reason }}
+                  {{ lang === 'zh' ? (card.reason_zh || card.reason) : card.reason }}
                 </div>
 
                 <!-- Code segment comparison box -->
                 <div class="suggested-code-box">
                   <div class="code-header">
-                    <span>{{ t[currentLang].suggestCode }}</span>
+                    <span>{{ t('review.suggestCode') }}</span>
                     <button class="copy-btn" @click="copyCode(card.suggested_code, $event)">
                       <el-icon><DocumentCopy /></el-icon>
-                      <span>{{ currentLang === 'zh' ? '复制' : 'COPY' }}</span>
+                      <span>{{ t('review.copy') }}</span>
                     </button>
                   </div>
                   <pre class="code-content"><code>{{ card.suggested_code }}</code></pre>
@@ -195,64 +188,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, inject, watch } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from '@/i18n'
 import { ElMessage } from 'element-plus'
 import * as echarts from 'echarts'
 
-const currentLang = inject('lang', ref('zh'))
+const { t, lang } = useI18n()
 const route = useRoute()
-
-const t = {
-  zh: {
-    header: "智能 PR 评审控制台",
-    subHeader: "对单个代码合并请求执行深层 AST 和大模型混合上下文安全审计",
-    inputTitle: "安全 PR 代码扫描器",
-    inputSub: "输入 GitHub PR 链接以开启混合上下文代码深度审计",
-    btnText: "开启 AI 智能审计",
-    radarTitle: "漏洞与质量度量雷达",
-    s1: "综合得分",
-    s2: "安全性",
-    s3: "性能评分",
-    summaryTitle: "PR 变更结构化总结",
-    sum1: "一句话改动概述",
-    sum2: "受影响模块清单",
-    sum3: "检测到破坏性变更 (Breaking Changes)",
-    cardsHeader: "行内智能评审批注卡片",
-    issuesBadge: "个缺陷/优化点已发现",
-    suggestCode: "推荐优化修复代码",
-    t1: "规范度",
-    t2: "安全性",
-    t3: "性能",
-    t4: "可读性",
-    successMsg: "AI 审计成功完成！",
-    fallbackMsg: "Go 后端离线。运行客户端模拟审计引擎。"
-  },
-  en: {
-    header: "INTELLIGENT PR SCANNER",
-    subHeader: "Perform deep AST & LLM hybrid context audits on individual Pull Requests",
-    inputTitle: "SECURE PR CODE SCANNER",
-    inputSub: "Input a GitHub Pull Request URL to perform deep AST and LLM hybrid context reviews",
-    btnText: "TRIGGER AI AUDIT",
-    radarTitle: "VULNERABILITY & METRICS RADAR",
-    s1: "OVERALL",
-    s2: "SECURITY",
-    s3: "PERFORMANCE",
-    summaryTitle: "PR STRUCTURAL SUMMARY",
-    sum1: "ONE-SENTENCE OVERVIEW",
-    sum2: "AFFECTED MODULES",
-    sum3: "BREAKING CHANGES DETECTED",
-    cardsHeader: "INLINE SCHEMATIC AUDIT CARDS",
-    issuesBadge: "ISSUES FOUND",
-    suggestCode: "SUGGESTED OPTIMIZATION",
-    t1: "Standards",
-    t2: "Security",
-    t3: "Performance",
-    t4: "Readability",
-    successMsg: "AI Audit completed successfully!",
-    fallbackMsg: "Go backend offline. Running client mock review engine."
-  }
-}
 
 const prUrl = ref('')
 const prUrlInputRef = ref(null)
@@ -270,20 +213,11 @@ const focusInput = () => {
 const selectedModelId = ref('deepseek-v3')
 const showExportMenu = ref(false)
 
-const switchModel = (id) => {
-  selectedModelId.value = id
-  let baseUrl = 'https://api.deepseek.com/v1'
-  let enforcedModel = 'deepseek-chat'
-  if (id === 'gpt-plus') {
-    baseUrl = 'https://aigocode.com/v1'
-    enforcedModel = 'gpt-4o'
-    localStorage.setItem('apiKey', 'sk-7c22836d86108bbca8f5d6f14855fe9bf41e980b6273e83548a199a389ea920a')
-  } else {
-    localStorage.removeItem('apiKey')
-  }
-  localStorage.setItem('baseUrl', baseUrl)
-  localStorage.setItem('enforcedModel', enforcedModel)
-  localStorage.setItem('selectedModelId', id)
+const switchModel = () => {
+  selectedModelId.value = 'deepseek-v3'
+  localStorage.setItem('baseUrl', 'https://api.deepseek.com/v1')
+  localStorage.setItem('enforcedModel', 'deepseek-chat')
+  localStorage.setItem('selectedModelId', 'deepseek-v3')
 }
 
 const currentTime = ref(new Date().toLocaleTimeString())
@@ -292,7 +226,7 @@ setInterval(() => {
 }, 1000)
 
 // Watch global language to re-initialize ECharts axis labels seamlessly
-watch(currentLang, () => {
+watch(lang, () => {
   if (reviewData.value) {
     nextTick(() => {
       initRadarChart()
@@ -352,7 +286,7 @@ const mockAuditPayload = {
 
 const startAnalysis = () => {
   if (!prUrl.value) {
-    ElMessage.warning(currentLang.value === 'zh' ? '请输入有效的 GitHub PR 链接。' : 'Please input a valid GitHub PR URL.')
+    ElMessage.warning(t('review.validation.emptyUrl'))
     return
   }
   loading.value = true
@@ -379,9 +313,9 @@ const startAnalysis = () => {
       const payload = await res.json()
       if (res.ok) {
         reviewData.value = payload.data
-        ElMessage.success(t[currentLang.value].successMsg)
+        ElMessage.success(t('review.successMsg'))
       } else {
-        ElMessage.error(currentLang.value === 'zh' ? `审计失败: ${payload.error || '服务器错误'}` : `Audit Failed: ${payload.error || 'Server error'}`)
+        ElMessage.error(`${t('review.error.auditFailed')}${payload.error || t('common.serverError')}`)
       }
       
       nextTick(() => {
@@ -389,7 +323,7 @@ const startAnalysis = () => {
       })
     } catch (e) {
       reviewData.value = mockAuditPayload
-      ElMessage.info(t[currentLang.value].fallbackMsg)
+      ElMessage.info(t('review.fallbackMsg'))
       nextTick(() => {
         initRadarChart()
       })
@@ -423,12 +357,12 @@ const initRadarChart = (isPrint = false) => {
       },
       formatter: function (params) {
         const indicators = [
-          t[currentLang.value].t1,
-          t[currentLang.value].t2,
-          t[currentLang.value].t3,
-          t[currentLang.value].t4
+          t('review.t1'),
+          t('review.t2'),
+          t('review.t3'),
+          t('review.t4')
         ];
-        let html = `<div style="padding: 2px; font-weight: bold; border-bottom: 1px solid rgba(0, 240, 255, 0.2); margin-bottom: 6px; color: #00f0ff;">${currentLang.value === 'zh' ? '当前 PR 审计指标' : 'Current PR Metrics'}</div>`;
+        let html = `<div style="padding: 2px; font-weight: bold; border-bottom: 1px solid rgba(0, 240, 255, 0.2); margin-bottom: 6px; color: #00f0ff;">${t('review.radarTooltipTitle')}</div>`;
         for (let i = 0; i < indicators.length; i++) {
           html += `<div style="display: flex; justify-content: space-between; gap: 20px; margin: 4px 0;">
             <span style="color: #94a3b8;">${indicators[i]}:</span>
@@ -440,10 +374,10 @@ const initRadarChart = (isPrint = false) => {
     },
     radar: {
       indicator: [
-        { name: t[currentLang.value].t1, max: 100 },
-        { name: t[currentLang.value].t2, max: 100 },
-        { name: t[currentLang.value].t3, max: 100 },
-        { name: t[currentLang.value].t4, max: 100 }
+        { name: t('review.t1'), max: 100 },
+        { name: t('review.t2'), max: 100 },
+        { name: t('review.t3'), max: 100 },
+        { name: t('review.t4'), max: 100 }
       ],
       axisName: {
         color: isPrint ? '#0f172a' : '#94a3b8',
@@ -479,7 +413,7 @@ const initRadarChart = (isPrint = false) => {
               reviewData.value.summary.performance_score,
               reviewData.value.summary.readability_score
             ],
-            name: currentLang.value === 'zh' ? '安全质量维度' : 'Vulnerabilities',
+            name: t('review.radarSeriesName'),
             symbol: 'circle',
             symbolSize: 6,
             label: {
@@ -518,7 +452,7 @@ const copyCode = (text, event) => {
   navigator.clipboard.writeText(text)
   const btn = event.currentTarget
   const originalHtml = btn.innerHTML
-  btn.innerHTML = `<span>${currentLang.value === 'zh' ? '复制成功!' : 'SUCCESS!'}</span>`
+  btn.innerHTML = `<span>${t('review.copySuccess')}</span>`
   btn.style.color = '#00ff66'
   setTimeout(() => {
     btn.innerHTML = originalHtml
@@ -527,8 +461,8 @@ const copyCode = (text, event) => {
 }
 
 const triggerPdfExport = (targetLang) => {
-  const originalLang = currentLang.value
-  currentLang.value = targetLang
+  const originalLang = lang.value
+  lang.value = targetLang
   showExportMenu.value = false
   
   // Add print mode selector class to body
@@ -544,7 +478,7 @@ const triggerPdfExport = (targetLang) => {
       
       // Restore states
       document.body.classList.remove('printing-' + targetLang)
-      currentLang.value = originalLang
+      lang.value = originalLang
       
       nextTick(() => {
         initRadarChart()
@@ -561,15 +495,10 @@ onMounted(async () => {
   window.addEventListener('click', closeExportMenu)
 
   const savedModel = localStorage.getItem('selectedModelId')
-  if (savedModel) {
-    if (savedModel === 'deepseek-r1') {
-      switchModel('gpt-plus')
-    } else {
-      switchModel(savedModel)
-    }
-  } else {
-    switchModel('deepseek-v3')
+  if (savedModel && savedModel !== 'deepseek-v3') {
+    localStorage.removeItem('selectedModelId')
   }
+  switchModel()
 
   const taskId = route.query.id
   if (taskId) {
@@ -584,7 +513,7 @@ onMounted(async () => {
           initRadarChart()
         })
       } else {
-        ElMessage.error(currentLang.value === 'zh' ? '获取历史审计记录失败。' : 'Failed to fetch historical audit logs.')
+        ElMessage.error(t('review.error.fetchFailed'))
       }
     } catch (e) {
       // Fallback

@@ -3,23 +3,23 @@
     <!-- Top Header -->
     <div class="welcome-banner">
       <div class="welcome-text">
-        <h2>{{ t[currentLang].header }}</h2>
-        <p>{{ t[currentLang].subHeader }}</p>
+        <h2>{{ t('dashboard.header') }}</h2>
+        <p>{{ t('dashboard.subHeader') }}</p>
       </div>
       <div class="system-time">
         <span class="pulse-green"></span>
-        <span class="clock">SYSTEM MONITORING</span>
+        <span class="clock">{{ t('dashboard.clock') }}</span>
       </div>
     </div>
 
     <!-- Statistics Grid -->
     <div class="stats-grid">
-      <div v-for="stat in stats" :key="stat.label" class="cyber-card stat-card">
+      <div v-for="stat in stats" :key="stat.key" class="cyber-card stat-card">
         <div class="card-glow"></div>
         <div class="card-content stat-box">
-          <span class="stat-label">{{ currentLang === 'zh' ? stat.labelZh : stat.label }}</span>
+          <span class="stat-label">{{ t('dashboard.stats.' + stat.key + '.label') }}</span>
           <h3 :class="['stat-val', stat.colorClass]">{{ stat.value }}</h3>
-          <p class="stat-trend">{{ currentLang === 'zh' ? stat.trendZh : stat.trend }}</p>
+          <p class="stat-trend">{{ t('dashboard.stats.' + stat.key + '.trend') }}</p>
         </div>
       </div>
     </div>
@@ -30,8 +30,8 @@
       <div class="cyber-card chart-card">
         <div class="card-glow"></div>
         <div class="card-content">
-          <h3>{{ t[currentLang].radarTitle }}</h3>
-          <p class="subtitle">{{ t[currentLang].radarSub }}</p>
+          <h3>{{ t('dashboard.radarTitle') }}</h3>
+          <p class="subtitle">{{ t('dashboard.radarSub') }}</p>
           <div ref="radarChartRef" class="radar-chart-container"></div>
         </div>
       </div>
@@ -41,17 +41,17 @@
         <div class="card-glow"></div>
         <div class="card-content">
           <div>
-            <h3>{{ t[currentLang].tableTitle }}</h3>
-            <p class="subtitle">{{ t[currentLang].tableSub }}</p>
+            <h3>{{ t('dashboard.tableTitle') }}</h3>
+            <p class="subtitle">{{ t('dashboard.tableSub') }}</p>
             
             <div class="logs-table-wrapper">
               <table class="cyber-table">
                 <thead>
                   <tr>
-                    <th>{{ t[currentLang].col1 }}</th>
-                    <th>{{ t[currentLang].col2 }}</th>
-                    <th>{{ t[currentLang].col3 }}</th>
-                    <th>{{ t[currentLang].col4 }}</th>
+                    <th>{{ t('dashboard.col1') }}</th>
+                    <th>{{ t('dashboard.col2') }}</th>
+                    <th>{{ t('dashboard.col3') }}</th>
+                    <th>{{ t('dashboard.col4') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -97,11 +97,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, inject, watch, computed } from 'vue'
+import { ref, onMounted, nextTick, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from '@/i18n'
 import * as echarts from 'echarts'
 
-const currentLang = inject('lang', ref('zh'))
+const { t, lang } = useI18n()
 
 const currentPage = ref(1)
 const pageSize = ref(4)
@@ -112,46 +113,11 @@ const displayedReviews = computed(() => {
   return recentReviews.value.slice(start, end)
 })
 
-const t = {
-  zh: {
-    header: "大盘监控中心",
-    subHeader: "项目平均健康指标、安全规范趋势以及扫描足迹大盘",
-    radarTitle: "全局代码质量指标",
-    radarSub: "所有历史代码审查得分的综合平均值向量",
-    tableTitle: "近期 PR 自动审计日志",
-    tableSub: "保存在 MySQL 数据库中的最近代码扫描足迹",
-    t1: "规范度",
-    t2: "安全性",
-    t3: "性能",
-    t4: "可读性",
-    col1: "代码合并请求节点",
-    col2: "安全规范评分",
-    col3: "审计时间",
-    col4: "状态"
-  },
-  en: {
-    header: "METRICS CORE DASHBOARD",
-    subHeader: "Aggregate repo health, security compliance trends, and scanning footprints",
-    radarTitle: "GLOBAL CODE COMPLIANCE METRICS",
-    radarSub: "Aggregated average score vectors computed from all historical audits",
-    tableTitle: "RECENT PR CODE AUDIT LOGS",
-    tableSub: "Latest pull requests scanned and recorded inside GORM MySQL database",
-    t1: "Standards",
-    t2: "Security",
-    t3: "Performance",
-    t4: "Readability",
-    col1: "Pull Request Node",
-    col2: "Compliance Score",
-    col3: "Audit Date",
-    col4: "Status"
-  }
-}
-
 const stats = ref([
-  { label: "TOTAL REVIEWS COMPLETED", labelZh: "累计审计PR完成数", value: "256", trend: "▲ +18% from last week", trendZh: "▲ 比上周增长 +18%", colorClass: "cyan" },
-  { label: "AVERAGE COMPLIANCE SCORE", labelZh: "平均代码健康评分", value: "86.5", trend: "▲ +1.2% quality gains", trendZh: "▲ 比上周质量提升 +1.2%", colorClass: "green" },
-  { label: "CRITICAL VULNERABILITIES DETECTED", labelZh: "累计发现的致命漏洞", value: "18", trend: "▼ -34% suppression trend", trendZh: "▼ 历史漏洞降低 -34%", colorClass: "red" },
-  { label: "COGNITIVE CONTEXT RETRIEVALS", labelZh: "关联上下文拉取次数", value: "1,482", trend: "▲ +156 dependencies bound", trendZh: "▲ 新解析关联依赖 +156", colorClass: "yellow" }
+  { key: 'totalReviews', value: "256", colorClass: "cyan" },
+  { key: 'averageScore', value: "86.5", colorClass: "green" },
+  { key: 'criticalVulns', value: "18", colorClass: "red" },
+  { key: 'contextRetrievals', value: "1,482", colorClass: "yellow" }
 ])
 
 const recentReviews = ref([
@@ -171,7 +137,7 @@ const radarChartRef = ref(null)
 let myChart = null
 
 // Watch global language to re-initialize ECharts axis labels seamlessly
-watch(currentLang, () => {
+watch(lang, () => {
   initRadarChart()
 })
 
@@ -220,12 +186,12 @@ const initRadarChart = () => {
       },
       formatter: function (params) {
         const indicators = [
-          t[currentLang.value].t1,
-          t[currentLang.value].t2,
-          t[currentLang.value].t3,
-          t[currentLang.value].t4
+          t('dashboard.t1'),
+          t('dashboard.t2'),
+          t('dashboard.t3'),
+          t('dashboard.t4')
         ];
-        let html = `<div style="padding: 2px; font-weight: bold; border-bottom: 1px solid rgba(0, 240, 255, 0.2); margin-bottom: 6px; color: #00f0ff;">${currentLang.value === 'zh' ? '全局平均指标' : 'Global Avg Metrics'}</div>`;
+        let html = `<div style="padding: 2px; font-weight: bold; border-bottom: 1px solid rgba(0, 240, 255, 0.2); margin-bottom: 6px; color: #00f0ff;">${t('dashboard.radarTooltipTitle')}</div>`;
         for (let i = 0; i < indicators.length; i++) {
           html += `<div style="display: flex; justify-content: space-between; gap: 20px; margin: 4px 0;">
             <span style="color: #94a3b8;">${indicators[i]}:</span>
@@ -237,10 +203,10 @@ const initRadarChart = () => {
     },
     radar: {
       indicator: [
-        { name: t[currentLang.value].t1, max: 100 },
-        { name: t[currentLang.value].t2, max: 100 },
-        { name: t[currentLang.value].t3, max: 100 },
-        { name: t[currentLang.value].t4, max: 100 }
+        { name: t('dashboard.t1'), max: 100 },
+        { name: t('dashboard.t2'), max: 100 },
+        { name: t('dashboard.t3'), max: 100 },
+        { name: t('dashboard.t4'), max: 100 }
       ],
       axisName: {
         color: '#94a3b8',
@@ -270,7 +236,7 @@ const initRadarChart = () => {
         data: [
           {
             value: [88.5, 82.0, 85.0, 90.5], // Average quality vectors
-            name: currentLang.value === 'zh' ? '历史平均数据' : 'Historical Averages',
+            name: t('dashboard.radarSeriesName'),
             symbol: 'circle',
             symbolSize: 6,
             label: {

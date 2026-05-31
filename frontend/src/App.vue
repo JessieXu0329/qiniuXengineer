@@ -7,7 +7,7 @@
     <header class="cyber-navbar">
       <div class="brand">
         <span class="pulse-dot"></span>
-        <h1 class="glow-text">{{ t[currentLang].title }}</h1>
+        <h1 class="glow-text">{{ t('app.title') }}</h1>
         <span class="badge">DEVOPS CORE v1.0</span>
       </div>
       
@@ -15,19 +15,19 @@
         <!-- Premium language switch button in top-right corner -->
         <button class="lang-toggle-btn" @click="toggleLang">
           <span class="lang-pulse-dot"></span>
-          <span>{{ currentLang === 'zh' ? 'ENGLISH' : '中文' }}</span>
+          <span>{{ t('app.toggleLang') }}</span>
         </button>
 
         <div class="status-item">
-          <span class="label">{{ t[currentLang].api }}:</span>
-          <span :class="['value', serverStatus]">{{ serverStatus.toUpperCase() }}</span>
+          <span class="label">{{ t('app.api') }}:</span>
+          <span :class="['value', serverStatus]">{{ t('app.status' + serverStatus.charAt(0).toUpperCase() + serverStatus.slice(1)) }}</span>
         </div>
         <div class="status-item">
-          <span class="label">{{ t[currentLang].db }}:</span>
-          <span class="value success">CONNECTED</span>
+          <span class="label">{{ t('app.db') }}:</span>
+          <span class="value success">{{ t('common.connected') }}</span>
         </div>
         <div class="status-item">
-          <span class="label">{{ t[currentLang].latency }}:</span>
+          <span class="label">{{ t('app.latency') }}:</span>
           <span class="value warning">18ms</span>
         </div>
       </div>
@@ -37,23 +37,23 @@
       <!-- Cyber glassmorphism sidebar -->
       <aside class="cyber-sidebar">
         <div class="menu-section">
-          <div class="section-title">{{ t[currentLang].sec1 }}</div>
+          <div class="section-title">{{ t('app.sec1') }}</div>
           <nav class="menu-list">
             <router-link to="/" class="menu-item" exact-active-class="active">
               <el-icon><Odometer /></el-icon>
-              <span>{{ t[currentLang].dashboard }}</span>
+              <span>{{ t('app.dashboard') }}</span>
             </router-link>
             <router-link to="/review" class="menu-item" active-class="active">
               <el-icon><DocumentChecked /></el-icon>
-              <span>{{ t[currentLang].review }}</span>
+              <span>{{ t('app.review') }}</span>
             </router-link>
             <router-link to="/context" class="menu-item" active-class="active">
               <el-icon><Connection /></el-icon>
-              <span>{{ t[currentLang].context }}</span>
+              <span>{{ t('app.context') }}</span>
             </router-link>
             <router-link to="/false-positive" class="menu-item" active-class="active">
               <el-icon><Filter /></el-icon>
-              <span>{{ t[currentLang].filter }}</span>
+              <span>{{ t('app.filter') }}</span>
             </router-link>
           </nav>
         </div>
@@ -67,7 +67,7 @@
           </div>
           <div class="profile-info">
             <div class="name">DevOps_Architect</div>
-            <div class="role">{{ t[currentLang].role }}</div>
+            <div class="role">{{ t('app.role') }}</div>
           </div>
         </div>
       </aside>
@@ -85,51 +85,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useI18n } from '@/i18n'
 import DashboardMockUp from './views/Dashboard.vue'
 
+const { t, lang } = useI18n()
 const serverStatus = ref('connecting')
-const currentLang = ref('zh') // Default to Chinese as requested
-
-// Translation dictionary
-const t = {
-  zh: {
-    title: "AI 代码评审助手",
-    api: "API 服务",
-    db: "数据库",
-    latency: "系统延迟",
-    dashboard: "Dashboard 大盘",
-    review: "PR Review 智能评审",
-    context: "Hybrid Context 关联项",
-    filter: "False Positive 过滤",
-    config: "AI 引擎配置",
-    tokens: "Access Tokens 令牌管理",
-    role: "系统超级管理员",
-    sec1: "核心控制中心",
-    sec2: "预设与引擎配置"
-  },
-  en: {
-    title: "AI PR REVIEWER",
-    api: "API SERVER",
-    db: "DB NODE",
-    latency: "LATENCY",
-    dashboard: "Dashboard Index",
-    review: "PR Review Audit",
-    context: "Hybrid Context Retriever",
-    filter: "False Positive Engine",
-    config: "AI Engine Config",
-    tokens: "Access Tokens",
-    role: "Admin Operator",
-    sec1: "METRICS & CONTROL",
-    sec2: "PRESETS & ENGINE"
-  }
-}
-
-// Provide language reactive state globally so all child views translate instantly!
-provide('lang', currentLang)
 
 const toggleLang = () => {
-  currentLang.value = currentLang.value === 'zh' ? 'en' : 'zh'
+  lang.value = lang.value === 'zh' ? 'en' : 'zh'
 }
 
 // Test connection to Go backend on startup

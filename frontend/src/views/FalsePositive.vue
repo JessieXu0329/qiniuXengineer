@@ -3,12 +3,12 @@
     <!-- Top Header -->
     <div class="welcome-banner">
       <div class="welcome-text">
-        <h2>{{ t[currentLang].header }}</h2>
-        <p>{{ t[currentLang].subHeader }}</p>
+        <h2>{{ t('filter.header') }}</h2>
+        <p>{{ t('filter.subHeader') }}</p>
       </div>
       <div class="system-time">
         <span class="pulse-green"></span>
-        <span class="clock">{{ t[currentLang].clock }}</span>
+        <span class="clock">{{ t('filter.clock') }}</span>
       </div>
     </div>
 
@@ -17,13 +17,13 @@
       <div class="card-glow"></div>
       <div class="card-content metric-banner">
         <div class="metric-block">
-          <span class="metric-title">{{ t[currentLang].bannerTitle }}</span>
-          <p class="metric-desc" v-html="t[currentLang].bannerDesc"></p>
+          <span class="metric-title">{{ t('filter.bannerTitle') }}</span>
+          <p class="metric-desc" v-html="t('filter.bannerDesc')"></p>
         </div>
         <div class="mini-stats">
           <div class="ms-pill">
             <span class="val">84%</span>
-            <span class="lbl">{{ t[currentLang].miniStatLbl }}</span>
+            <span class="lbl">{{ t('filter.miniStatLbl') }}</span>
           </div>
         </div>
       </div>
@@ -35,27 +35,27 @@
         <div class="cyber-card table-card">
           <div class="card-glow"></div>
           <div class="card-content">
-            <h3>{{ t[currentLang].tableTitle }}</h3>
-            <p class="subtitle">{{ t[currentLang].tableSub }}</p>
+            <h3>{{ t('filter.tableTitle') }}</h3>
+            <p class="subtitle">{{ t('filter.tableSub') }}</p>
             
             <div class="rules-table-container">
               <table class="cyber-table">
                 <thead>
                   <tr>
-                    <th>{{ t[currentLang].colName }}</th>
-                    <th>{{ t[currentLang].colPattern }}</th>
-                    <th>{{ t[currentLang].colType }}</th>
-                    <th class="center">{{ t[currentLang].colActions }}</th>
+                    <th>{{ t('filter.colName') }}</th>
+                    <th>{{ t('filter.colPattern') }}</th>
+                    <th>{{ t('filter.colType') }}</th>
+                    <th class="center">{{ t('filter.colActions') }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(rule, index) in rules" :key="index">
                     <td>
-                      <div class="rule-name">{{ currentLang === 'zh' ? rule.nameZh : rule.name }}</div>
-                      <div class="rule-desc">{{ currentLang === 'zh' ? rule.descZh : rule.desc }}</div>
+                      <div class="rule-name">{{ lang === 'zh' ? rule.nameZh : rule.name }}</div>
+                      <div class="rule-desc">{{ lang === 'zh' ? rule.descZh : rule.desc }}</div>
                     </td>
                     <td><code class="match-code">{{ rule.pattern }}</code></td>
-                    <td><span :class="['severity-badge', rule.type]">{{ currentLang === 'zh' ? typeMapZh[rule.type] : rule.type }}</span></td>
+                    <td><span :class="['severity-badge', rule.type]">{{ t('filter.types.' + rule.type) }}</span></td>
                     <td class="center">
                       <button @click="deleteRule(index)" class="action-btn delete">
                         <el-icon><Delete /></el-icon>
@@ -63,7 +63,7 @@
                     </td>
                   </tr>
                   <tr v-if="rules.length === 0">
-                    <td colspan="4" class="empty-row">{{ t[currentLang].emptyMsg }}</td>
+                    <td colspan="4" class="empty-row">{{ t('filter.emptyMsg') }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -77,50 +77,50 @@
         <div class="cyber-card form-card">
           <div class="card-glow"></div>
           <div class="card-content">
-            <h3>{{ t[currentLang].formTitle }}</h3>
-            <p class="subtitle">{{ t[currentLang].formSub }}</p>
+            <h3>{{ t('filter.formTitle') }}</h3>
+            <p class="subtitle">{{ t('filter.formSub') }}</p>
 
             <form @submit.prevent="saveRule" class="cyber-form">
               <div class="form-group">
-                <label>{{ t[currentLang].formLabelName }}</label>
-                <input 
-                  v-model="newRule.name" 
-                  type="text" 
-                  :placeholder="t[currentLang].placeholderName" 
-                  required 
+                <label>{{ t('filter.formLabelName') }}</label>
+                <input
+                  v-model="newRule.name"
+                  type="text"
+                  :placeholder="t('filter.placeholderName')"
+                  required
                   class="form-input"
                 />
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label>{{ t[currentLang].formLabelPattern }}</label>
-                  <input 
-                    v-model="newRule.pattern" 
-                    type="text" 
-                    placeholder="e.g. **/*_test.go" 
-                    required 
+                  <label>{{ t('filter.formLabelPattern') }}</label>
+                  <input
+                    v-model="newRule.pattern"
+                    type="text"
+                    placeholder="e.g. **/*_test.go"
+                    required
                     class="form-input code"
                   />
                 </div>
-                
+
                 <div class="form-group">
-                  <label>{{ t[currentLang].formLabelType }}</label>
+                  <label>{{ t('filter.formLabelType') }}</label>
                   <select v-model="newRule.type" class="form-select">
-                    <option value="style">{{ currentLang === 'zh' ? '代码风格 / 格式化' : 'Style / Formatting' }}</option>
-                    <option value="lint">{{ currentLang === 'zh' ? 'Lint 静态检查警告' : 'Linting Warnings' }}</option>
-                    <option value="comments">{{ currentLang === 'zh' ? '仅注释修改' : 'Comments Only' }}</option>
-                    <option value="all">{{ currentLang === 'zh' ? '所有发现的缺陷' : 'All Findings' }}</option>
+                    <option value="style">{{ t('filter.selectOptions.style') }}</option>
+                    <option value="lint">{{ t('filter.selectOptions.lint') }}</option>
+                    <option value="comments">{{ t('filter.selectOptions.comments') }}</option>
+                    <option value="all">{{ t('filter.selectOptions.all') }}</option>
                   </select>
                 </div>
               </div>
 
               <div class="form-group">
-                <label>{{ t[currentLang].formLabelDesc }}</label>
-                <textarea 
-                  v-model="newRule.desc" 
-                  :placeholder="t[currentLang].placeholderDesc" 
-                  rows="3" 
+                <label>{{ t('filter.formLabelDesc') }}</label>
+                <textarea
+                  v-model="newRule.desc"
+                  :placeholder="t('filter.placeholderDesc')"
+                  rows="3"
                   required
                   class="form-textarea"
                 ></textarea>
@@ -128,7 +128,7 @@
 
               <button type="submit" class="form-btn">
                 <span class="btn-glow"></span>
-                <span class="btn-text">{{ t[currentLang].formBtn }}</span>
+                <span class="btn-text">{{ t('filter.formBtn') }}</span>
               </button>
             </form>
           </div>
@@ -139,72 +139,11 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref } from 'vue'
+import { useI18n } from '@/i18n'
 import { ElMessage } from 'element-plus'
 
-const currentLang = inject('lang', ref('zh'))
-
-const typeMapZh = {
-  style: '代码风格',
-  lint: 'Lint静态检查',
-  comments: '仅注释',
-  all: '全部类型'
-}
-
-const t = {
-  zh: {
-    header: "误报规避过滤引擎",
-    subHeader: "噪声过滤器、样式忽略规则以及认知忽略范围控制面板",
-    clock: "今天已节省 4.2 分钟专注时间",
-    bannerTitle: "[上次评审扫描报告: 噪声规避引擎活动中]",
-    bannerDesc: "在您最近一次 PR 评审扫描期间，有 <strong>3 个误报</strong>已被您的过滤引擎边界自动拦截。这成功为开发人员节省了 <strong>4.2 分钟</strong> 的代码审查专注时间。",
-    miniStatLbl: "扫描噪音已净化率",
-    tableTitle: "当前生效的忽略过滤规则",
-    tableSub: "在保存评审意见前，与 AST 审查批注执行匹配的匹配拦截策略",
-    colName: "规则标识名",
-    colPattern: "匹配路径匹配器",
-    colType: "忽略分类",
-    colActions: "操作",
-    emptyMsg: "未配置任何忽略过滤器。系统扫描处于全量批注输出模式。",
-    formTitle: "添加过滤规避规则",
-    formSub: "部署自定义忽略匹配参数，定向规避特定文件或包路径的非关键批注",
-    formLabelName: "规则标识名称",
-    formLabelPattern: "范围路径匹配器 (GLOB / 正则)",
-    formLabelType: "忽略分类",
-    formLabelDesc: "过滤理由与详细描述说明",
-    placeholderName: "例如: 忽略单元测试环境中的日志断言",
-    placeholderDesc: "阐述为什么应该在审计合规中忽略这些行内批注...",
-    formBtn: "部署并激活该规则",
-    successMsg: "已成功部署到过滤引擎。",
-    removedMsg: "已从引擎中成功移除。"
-  },
-  en: {
-    header: "FALSE POSITIVE ENGINE",
-    subHeader: "Noise filters, styling suppressions, and cognitive ignore rules",
-    clock: "SAVED 4.2 MIN FOCUS TODAY",
-    bannerTitle: "[LAST REVIEW SESSION REPORT: NOISE FILTER ENGINE]",
-    bannerDesc: "During your last PR review scan, <strong>3 False Positives</strong> were automatically filtered and suppressed by your active config boundaries. This successfully saved <strong>4.2 minutes</strong> of engineer code review focus.",
-    miniStatLbl: "Audits Noise Cleansed",
-    tableTitle: "ACTIVE CONTEXT SUPPRESSION RULES",
-    tableSub: "Enforced pattern suppressions matched against AST reviews before persisting comments",
-    colName: "Rule Identifier",
-    colPattern: "Scope Matcher",
-    colType: "Type",
-    colActions: "Actions",
-    emptyMsg: "No active ignore filters configured. System scanning is at full verbosity.",
-    formTitle: "ADD CONTEXT SUPPRESS FILTER",
-    formSub: "Deploy a custom suppression parameter to target specific file boundaries or packages",
-    formLabelName: "RULE NAME",
-    formLabelPattern: "SCOPE MATCHER (GLOB / REGEX)",
-    formLabelType: "SUPPRESS TYPE",
-    formLabelDesc: "DESCRIPTION & REASON",
-    placeholderName: "e.g. Ignore testing logger assertions",
-    placeholderDesc: "Explain why these comments should be suppressed for audit compliance...",
-    formBtn: "DEPLOY SUPPRESSION FILTER",
-    successMsg: "successfully deployed to filter engine.",
-    removedMsg: "has been removed."
-  }
-}
+const { t, lang } = useI18n()
 
 const rules = ref([
   {
@@ -251,9 +190,7 @@ const saveRule = () => {
   })
   
   ElMessage.success(
-    currentLang.value === 'zh'
-      ? `过滤规则 '${newRule.value.name}' ${t.zh.successMsg}`
-      : `Suppression rule '${newRule.value.name}' ${t.en.successMsg}`
+    `${lang.value === 'zh' ? '过滤规则' : 'Suppression rule'} '${newRule.value.name}' ${t('filter.successMsg')}`
   )
   
   // Reset form
@@ -266,13 +203,11 @@ const saveRule = () => {
 }
 
 const deleteRule = (index) => {
-  const deletedName = currentLang.value === 'zh' ? (rules.value[index].nameZh || rules.value[index].name) : rules.value[index].name
+  const deletedName = lang.value === 'zh' ? (rules.value[index].nameZh || rules.value[index].name) : rules.value[index].name
   rules.value.splice(index, 1)
-  
+
   ElMessage.info(
-    currentLang.value === 'zh'
-      ? `过滤规则 '${deletedName}' ${t.zh.removedMsg}`
-      : `Suppression rule '${deletedName}' ${t.en.removedMsg}`
+    `${lang.value === 'zh' ? '过滤规则' : 'Suppression rule'} '${deletedName}' ${t('filter.removedMsg')}`
   )
 }
 </script>
