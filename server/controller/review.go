@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -75,10 +76,12 @@ func (ctrl *ReviewController) Analyze(c *gin.Context) {
 		return
 	}
 
-	if urlType != "pull" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only GitHub Pull Request links are currently supported for analysis."})
-		return
-	}
+	log.Printf("[DEBUG] Analyzing PR: %s (owner: %s, repo: %s, target: %s) with token len: %d, token prefix: %s", urlStr, owner, repo, targetID, len(req.GitHubToken), func() string {
+		if len(req.GitHubToken) > 6 {
+			return req.GitHubToken[:6] + "..."
+		}
+		return req.GitHubToken
+	}())
 
 	task, err := ctrl.reviewService.AnalyzePR(urlStr, owner, repo, targetID, req.GitHubToken, req.APIKey, req.BaseURL, req.Model)
 	if err != nil {

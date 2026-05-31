@@ -62,6 +62,56 @@
       </div>
     </div>
 
+    <!-- Credentials Configuration Form -->
+    <div class="cyber-card credentials-wrapper">
+      <div class="card-glow"></div>
+      <div class="card-content">
+        <h3>{{ t[currentLang].configTitle }}</h3>
+        <p class="subtitle">{{ t[currentLang].configSub }}</p>
+
+        <form @submit.prevent="saveConfig" class="config-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ t[currentLang].formLabelBaseUrl }}</label>
+              <input v-model="baseUrl" type="text" class="form-input" placeholder="https://api.deepseek.com/v1" />
+            </div>
+            <div class="form-group">
+              <label>{{ t[currentLang].formLabelModel }}</label>
+              <input v-model="enforcedModel" type="text" class="form-input" placeholder="deepseek-chat" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ t[currentLang].formLabelApiKey }}</label>
+              <div class="password-input-wrapper">
+                <input v-model="apiKey" :type="showApiKey ? 'text' : 'password'" class="form-input" placeholder="sk-..." />
+                <button type="button" class="eye-btn" @click="showApiKey = !showApiKey">
+                  <el-icon><View v-if="showApiKey" /><Hide v-else /></el-icon>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>{{ t[currentLang].formLabelGithubToken }}</label>
+              <div class="password-input-wrapper">
+                <input v-model="githubToken" :type="showGithubToken ? 'text' : 'password'" class="form-input" placeholder="ghp_..." />
+                <button type="button" class="eye-btn" @click="showGithubToken = !showGithubToken">
+                  <el-icon><View v-if="showGithubToken" /><Hide v-else /></el-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <button type="submit" class="save-btn">
+              <span class="btn-glow"></span>
+              <span class="btn-text">{{ t[currentLang].formBtn }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -121,6 +171,13 @@ const t = {
 }
 
 const selectedModelId = ref('deepseek-v3')
+const baseUrl = ref('https://api.deepseek.com/v1')
+const enforcedModel = ref('deepseek-chat')
+const apiKey = ref('')
+const githubToken = ref('')
+
+const showApiKey = ref(false)
+const showGithubToken = ref(false)
 
 const models = ref([
   {
@@ -144,28 +201,40 @@ const models = ref([
 const selectModel = (id) => {
   selectedModelId.value = id
   
-  let baseUrl = 'https://api.deepseek.com/v1'
-  let enforcedModel = 'deepseek-chat'
-  if (id === 'deepseek-r1') {
-    enforcedModel = 'deepseek-reasoner'
+  if (id === 'deepseek-v3') {
+    baseUrl.value = 'https://api.deepseek.com/v1'
+    enforcedModel.value = 'deepseek-chat'
+  } else if (id === 'deepseek-r1') {
+    baseUrl.value = 'https://api.deepseek.com/v1'
+    enforcedModel.value = 'deepseek-reasoner'
   }
 
-  localStorage.setItem('baseUrl', baseUrl)
-  localStorage.setItem('enforcedModel', enforcedModel)
+  localStorage.setItem('baseUrl', baseUrl.value)
+  localStorage.setItem('enforcedModel', enforcedModel.value)
   localStorage.setItem('selectedModelId', id)
 
   ElMessage.success(`${t[currentLang.value].switchMsg}${id.toUpperCase()}`)
+}
+
+const saveConfig = () => {
+  localStorage.setItem('baseUrl', baseUrl.value)
+  localStorage.setItem('enforcedModel', enforcedModel.value)
+  localStorage.setItem('apiKey', apiKey.value)
+  localStorage.setItem('githubToken', githubToken.value)
+  ElMessage.success(t[currentLang.value].saveMsg)
 }
 
 onMounted(() => {
   if (localStorage.getItem('selectedModelId')) {
     selectedModelId.value = localStorage.getItem('selectedModelId')
   } else {
-    // Default to deepseek-v3 if not set
-    localStorage.setItem('baseUrl', 'https://api.deepseek.com/v1')
-    localStorage.setItem('enforcedModel', 'deepseek-chat')
     localStorage.setItem('selectedModelId', 'deepseek-v3')
   }
+
+  baseUrl.value = localStorage.getItem('baseUrl') || 'https://api.deepseek.com/v1'
+  enforcedModel.value = localStorage.getItem('enforcedModel') || 'deepseek-chat'
+  apiKey.value = localStorage.getItem('apiKey') || ''
+  githubToken.value = localStorage.getItem('githubToken') || ''
 })
 </script>
 

@@ -97,6 +97,13 @@ func initInfrastructure() {
 	go func() {
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 		if err == nil {
+			// Configure connection pool to prevent connection drop errors
+			sqlDB, dbErr := db.DB()
+			if dbErr == nil {
+				sqlDB.SetMaxIdleConns(10)
+				sqlDB.SetMaxOpenConns(100)
+				sqlDB.SetConnMaxLifetime(time.Hour)
+			}
 			// Auto migrate GORM database schemas dynamically
 			log.Println("[MIGRATE] Bootstrapping GORM database schemas auto-migrations...")
 			migrationErr := db.AutoMigrate(&model.PRReviewTask{}, &model.ReviewComment{})
