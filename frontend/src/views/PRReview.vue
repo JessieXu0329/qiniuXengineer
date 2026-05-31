@@ -126,7 +126,28 @@
           <div class="card-content">
             <div class="reviews-header">
               <h3>{{ t[currentLang].cardsHeader }}</h3>
-              <span class="badge">{{ reviewData.summary.cards?.length || 0 }} {{ t[currentLang].issuesBadge }}</span>
+              <div class="header-actions">
+                <span class="badge">{{ reviewData.summary.cards?.length || 0 }} {{ t[currentLang].issuesBadge }}</span>
+                
+                <!-- Advanced PDF Export Button and Dropdown -->
+                <div class="export-pdf-dropdown">
+                  <button class="export-btn" @click.stop="showExportMenu = !showExportMenu">
+                    <el-icon><Download /></el-icon>
+                    <span>{{ currentLang === 'zh' ? '导出 PDF 报告' : 'EXPORT PDF' }}</span>
+                    <el-icon class="arrow-icon"><ArrowDown /></el-icon>
+                  </button>
+                  <div class="dropdown-menu animate-fade-in" v-if="showExportMenu">
+                    <button class="menu-item-btn" @click="triggerPdfExport('zh')">
+                      <span class="icon">🇨🇳</span>
+                      <span>中文 PDF 报告</span>
+                    </button>
+                    <button class="menu-item-btn" @click="triggerPdfExport('en')">
+                      <span class="icon">🇺🇸</span>
+                      <span>English PDF Report</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="cards-list">
@@ -173,7 +194,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, inject, watch } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import * as echarts from 'echarts'
@@ -239,6 +260,7 @@ const radarChartRef = ref(null)
 let myChart = null
 
 const selectedModelId = ref('deepseek-v3')
+const showExportMenu = ref(false)
 
 const switchModel = (id) => {
   selectedModelId.value = id
@@ -489,7 +511,40 @@ const copyCode = (text, event) => {
   }, 1500)
 }
 
+const triggerPdfExport = (targetLang) => {
+  const originalLang = currentLang.value
+  currentLang.value = targetLang
+  showExportMenu.value = false
+  
+  // Add print mode selector class to body
+  document.body.classList.add('printing-' + targetLang)
+  
+  nextTick(() => {
+    // Redraw ECharts immediately with target language text
+    initRadarChart()
+    
+    // Tiny delay to ensure charts are fully rendered before printing
+    setTimeout(() => {
+      window.print()
+      
+      // Restore states
+      document.body.classList.remove('printing-' + targetLang)
+      currentLang.value = originalLang
+      
+      nextTick(() => {
+        initRadarChart()
+      })
+    }, 450)
+  })
+}
+
+const closeExportMenu = () => {
+  showExportMenu.value = false
+}
+
 onMounted(async () => {
+  window.addEventListener('click', closeExportMenu)
+
   if (localStorage.getItem('selectedModelId')) {
     selectedModelId.value = localStorage.getItem('selectedModelId')
   } else {
@@ -522,6 +577,10 @@ onMounted(async () => {
       loading.value = false
     }
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', closeExportMenu)
 })
 </script>
 
@@ -1065,6 +1124,273 @@ onMounted(async () => {
     justify-content: center;
     font-size: 11.5px;
     padding: 6px 8px;
+  }
+}
+
+/* Screen-only Dropdown Styles */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.export-pdf-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-btn {
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #00f0ff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+.export-btn:hover {
+  background: rgba(0, 240, 255, 0.15);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.export-btn .arrow-icon {
+  font-size: 10px;
+  margin-left: 2px;
+  transition: transform 0.3s;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(13, 20, 35, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 8px;
+  padding: 6px;
+  width: 170px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.15);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item-btn {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #cbd5e1;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.menu-item-btn:hover {
+  background: rgba(0, 240, 255, 0.1);
+  color: #00f0ff;
+}
+
+.menu-item-btn .icon {
+  font-size: 14px;
+}
+
+/* ==========================================
+   HIGH-FIDELITY VECTOR PDF PRINT STYLES 
+   ========================================== */
+@media print {
+  /* 1. Hide interactive/navigation elements entirely */
+  .cyber-sidebar,
+  .cyber-navbar,
+  .welcome-banner,
+  .input-card,
+  .export-pdf-dropdown,
+  .copy-btn,
+  .card-glow {
+    display: none !important;
+  }
+
+  /* 2. Format basic layout for paper */
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  }
+
+  .cyber-container,
+  .cyber-main,
+  .main-layout,
+  .pr-review-page {
+    background: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  /* 3. Restructure grid columns into clean vertical blocks */
+  .results-grid {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .results-left,
+  .results-right {
+    width: 100% !important;
+    display: block !important;
+    float: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 4. White background for cards, clear dark text */
+  .cyber-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    color: #000000 !important;
+    margin-bottom: 25px !important;
+    padding: 20px !important;
+    page-break-inside: avoid !important;
+  }
+
+  .card-content {
+    padding: 0 !important;
+  }
+
+  /* 5. Formal Typography overrides */
+  h3 {
+    font-size: 18px !important;
+    color: #0f172a !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 15px !important;
+  }
+
+  h4 {
+    font-size: 13px !important;
+    color: #475569 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .summary-text, .card-reason {
+    color: #334155 !important;
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* 6. Score pills design for printing */
+  .score-pill {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+
+  .score-pill .label {
+    color: #64748b !important;
+  }
+
+  .score-pill .val {
+    color: #0f172a !important;
+    text-shadow: none !important;
+  }
+
+  /* 7. Timeline & Inline Cards constraints */
+  .review-inline-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #cbd5e1 !important;
+    color: #000000 !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .review-inline-card.critical {
+    border-left: 4px solid #ef4444 !important;
+  }
+  
+  .review-inline-card.warning {
+    border-left: 4px solid #f59e0b !important;
+  }
+  
+  .review-inline-card.suggestion {
+    border-left: 4px solid #3b82f6 !important;
+  }
+
+  .card-meta .level-text {
+    font-weight: 850 !important;
+  }
+
+  /* Code suggestion boxes */
+  .suggested-code-box {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    page-break-inside: avoid !important;
+  }
+
+  pre.code-content {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    font-family: "JetBrains Mono", Courier, monospace !important;
+    font-size: 11px !important;
+    white-space: pre-wrap !important;
+  }
+
+  /* 8. ECharts Radar Chart Page constraints */
+  .radar-chart-container {
+    height: 280px !important;
+    width: 100% !important;
+    border: 1px solid #f1f5f9 !important;
+    background: #fafafa !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* 9. Insert Language-Specific Formal Headers */
+  body.printing-zh::before {
+    content: "AI 代码审计与软件合规性评估报告";
+    display: block;
+    font-size: 24px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 3px double #0f172a;
+    padding-bottom: 12px;
+    color: #0f172a;
+    font-family: "SimSun", "Microsoft YaHei", sans-serif !important;
+  }
+
+  body.printing-en::before {
+    content: "AI Code Security Audit & Compliance Assessment Report";
+    display: block;
+    font-size: 24px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 3px double #0f172a;
+    padding-bottom: 12px;
+    color: #0f172a;
+    font-family: Arial, sans-serif !important;
   }
 }
 </style>
