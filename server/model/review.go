@@ -32,6 +32,7 @@ type ReviewComment struct {
 	LineNumber    int            `gorm:"type:int;not null" json:"line_number"`
 	Severity      string         `gorm:"type:varchar(32);not null" json:"severity"` // CRITICAL | WARNING | SUGGESTION
 	Reason        string         `gorm:"type:text;not null" json:"reason"`
+	ReasonZh      string         `gorm:"type:text" json:"reason_zh"`
 	SuggestedCode string         `gorm:"type:text" json:"suggested_code"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`

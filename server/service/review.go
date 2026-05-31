@@ -40,14 +40,16 @@ func (e *HTTPError) Error() string {
 }
 
 type LLMSummaryPart struct {
-	OneSentenceSummary string   `json:"one_sentence_summary"`
-	AffectedModules    []string `json:"affected_modules"`
-	BreakingChanges    []string `json:"breaking_changes"`
-	OverallScore       float64  `json:"overall_score"`
-	NormativeScore     float64  `json:"normative_score"`
-	SecurityScore      float64  `json:"security_score"`
-	PerformanceScore   float64  `json:"performance_score"`
-	ReadabilityScore   float64  `json:"readability_score"`
+	OneSentenceSummary   string   `json:"one_sentence_summary"`
+	OneSentenceSummaryZh string   `json:"one_sentence_summary_zh"`
+	AffectedModules      []string `json:"affected_modules"`
+	BreakingChanges      []string `json:"breaking_changes"`
+	BreakingChangesZh    []string `json:"breaking_changes_zh"`
+	OverallScore         float64  `json:"overall_score"`
+	NormativeScore       float64  `json:"normative_score"`
+	SecurityScore        float64  `json:"security_score"`
+	PerformanceScore     float64  `json:"performance_score"`
+	ReadabilityScore     float64  `json:"readability_score"`
 }
 
 type LLMCommentPart struct {
@@ -55,6 +57,7 @@ type LLMCommentPart struct {
 	Line          int    `json:"line"`
 	Level         string `json:"level"`
 	Reason        string `json:"reason"`
+	ReasonZh      string `json:"reason_zh"`
 	SuggestedCode string `json:"suggested_code"`
 }
 
@@ -162,6 +165,7 @@ func (s *ReviewService) AnalyzePR(prURL, owner, repo, prNumberText, customGitHub
 			LineNumber:    comment.Line,
 			Severity:      comment.Level,
 			Reason:        comment.Reason,
+			ReasonZh:      comment.ReasonZh,
 			SuggestedCode: comment.SuggestedCode,
 		})
 	}
@@ -313,13 +317,14 @@ DO NOT include any markdown code blocks like ` + "`" + "```json" + "`" + `, DO N
     "file": "string (filename)",
     "line": int (line number),
     "level": "string (MUST BE EXACTLY ONE OF THESE: CRITICAL, WARNING, SUGGESTION)",
-    "reason": "string (concise bug description)",
+    "reason": "string (concise bug description in English)",
+    "reason_zh": "string (concise bug description in Chinese)",
     "suggested_code": "string (exact fix code snippet)"
   }
 ]
 
 [EXAMPLE OF VALID OUTPUT - FOLLOW THIS EXACTLY]:
-[{"file":"main.go","line":12,"level":"CRITICAL","reason":"Hardcoded credentials found.","suggested_code":"pass := os.Getenv(\"DB_PASS\")"}]`
+[{"file":"main.go","line":12,"level":"CRITICAL","reason":"Hardcoded credentials found.","reason_zh":"发现硬编码凭据。","suggested_code":"pass := os.Getenv(\"DB_PASS\")"}]`
 
 	rawContent, err := s.chatCompletion(systemPrompt, "Review this Git diff:\n\n"+diffContent, 0.2, apiKey, customBaseURL, customModel)
 	if err != nil {
@@ -342,16 +347,18 @@ func (s *ReviewService) generatePRSummary(diffContent string, comments []LLMComm
 Return a raw JSON object only, with no markdown, no code fences, and no explanatory text.
 The object must match:
 {
-  "one_sentence_summary": "one sentence summary",
+  "one_sentence_summary": "one sentence summary in English",
+  "one_sentence_summary_zh": "one sentence summary in Chinese (一句话改动概述)",
   "affected_modules": ["changed/file.ext"],
-  "breaking_changes": [],
+  "breaking_changes": ["breaking change in English"],
+  "breaking_changes_zh": ["breaking change in Chinese (破坏性变更说明)"],
   "overall_score": 90,
   "normative_score": 90,
   "security_score": 90,
   "performance_score": 90,
   "readability_score": 90
 }
-The one_sentence_summary field must be exactly one sentence. Scores must be numbers from 0 to 100.`
+The one_sentence_summary and one_sentence_summary_zh fields must be exactly one sentence. Scores must be numbers from 0 to 100.`
 
 	userPrompt := fmt.Sprintf("Generate a one-sentence PR summary and score object for this diff and these review comments.\n\nReview comments JSON:\n%s\n\nGit diff:\n%s", string(commentsBytes), diffContent)
 	rawContent, err := s.chatCompletion(systemPrompt, userPrompt, 0.2, apiKey, customBaseURL, customModel)

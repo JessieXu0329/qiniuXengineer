@@ -105,6 +105,7 @@ func (ctrl *ReviewController) Analyze(c *gin.Context) {
 		Line          int    `json:"line"`
 		Level         string `json:"level"`
 		Reason        string `json:"reason"`
+		ReasonZh      string `json:"reason_zh"`
 		SuggestedCode string `json:"suggested_code"`
 	}
 
@@ -115,6 +116,7 @@ func (ctrl *ReviewController) Analyze(c *gin.Context) {
 			Line:          comment.LineNumber,
 			Level:         comment.Severity,
 			Reason:        comment.Reason,
+			ReasonZh:      comment.ReasonZh,
 			SuggestedCode: comment.SuggestedCode,
 		})
 	}
@@ -158,6 +160,7 @@ func (ctrl *ReviewController) GetDetail(c *gin.Context) {
 		Line          int    `json:"line"`
 		Level         string `json:"level"`
 		Reason        string `json:"reason"`
+		ReasonZh      string `json:"reason_zh"`
 		SuggestedCode string `json:"suggested_code"`
 	}
 
@@ -168,6 +171,7 @@ func (ctrl *ReviewController) GetDetail(c *gin.Context) {
 			Line:          comment.LineNumber,
 			Level:         comment.Severity,
 			Reason:        comment.Reason,
+			ReasonZh:      comment.ReasonZh,
 			SuggestedCode: comment.SuggestedCode,
 		})
 	}

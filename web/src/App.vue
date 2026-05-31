@@ -110,7 +110,7 @@ const t = {
     review: "PR Review 智能评审",
     context: "Hybrid Context 关联项",
     filter: "False Positive 过滤",
-    config: "AI Engine Config 引擎配置",
+    config: "AI 引擎配置",
     tokens: "Access Tokens 令牌管理",
     role: "系统超级管理员",
     sec1: "核心控制中心",
@@ -348,9 +348,12 @@ body {
   text-decoration: none;
   padding: 12px 16px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13.5px;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   border: 1px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menu-item:hover {
@@ -434,5 +437,17 @@ body {
   0% { transform: scale(1); opacity: 0.9; }
   50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 15px #00ff66, 0 0 25px #00ff66; }
   100% { transform: scale(1); opacity: 0.9; }
+}
+
+@media (max-width: 1200px) {
+  .cyber-sidebar {
+    width: 230px;
+    padding: 20px 10px;
+  }
+  .menu-item {
+    font-size: 12.5px;
+    padding: 10px 12px;
+    gap: 8px;
+  }
 }
 </style>
