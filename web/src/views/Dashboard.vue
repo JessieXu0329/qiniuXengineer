@@ -613,4 +613,24 @@ const getScoreClass = (score) => {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  .analytics-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .radar-chart-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

@@ -209,6 +209,8 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .pulse-dot {
@@ -229,6 +231,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
+  white-space: nowrap;
 }
 
 .badge {
@@ -448,6 +451,98 @@ body {
     font-size: 12.5px;
     padding: 10px 12px;
     gap: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cyber-container {
+    height: auto;
+    overflow-y: auto;
+  }
+  
+  .cyber-navbar {
+    flex-direction: column;
+    padding: 12px 15px;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .brand {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    justify-content: center;
+  }
+  
+  .glow-text {
+    font-size: 18px;
+  }
+  
+  .system-status {
+    width: 100%;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .lang-toggle-btn {
+    padding: 4px 10px;
+    font-size: 10px;
+  }
+  
+  .main-layout {
+    flex-direction: column;
+    overflow: visible;
+  }
+  
+  .cyber-sidebar {
+    width: 100%;
+    padding: 15px 15px 5px 15px;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    background: rgba(9, 15, 29, 0.95);
+    backdrop-filter: blur(12px);
+  }
+  
+  .menu-section {
+    margin-bottom: 10px;
+  }
+  
+  .section-title {
+    font-size: 9px;
+    margin-bottom: 8px;
+    padding-left: 5px;
+  }
+  
+  .menu-list {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 8px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .menu-list::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .menu-item {
+    font-size: 11.5px;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+  
+  .menu-item:hover {
+    transform: none;
+  }
+  
+  .cyber-profile {
+    display: none;
+  }
+  
+  .cyber-main {
+    padding: 15px;
+    overflow-y: visible;
   }
 }
 </style>
