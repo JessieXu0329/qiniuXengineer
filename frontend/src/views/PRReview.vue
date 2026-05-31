@@ -565,7 +565,7 @@ onMounted(async () => {
     if (savedModel === 'deepseek-r1') {
       switchModel('gpt-plus')
     } else {
-      selectedModelId.value = savedModel
+      switchModel(savedModel)
     }
   } else {
     switchModel('deepseek-v3')
