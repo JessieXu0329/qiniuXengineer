@@ -275,7 +275,7 @@ const switchModel = (id) => {
   let baseUrl = 'https://api.deepseek.com/v1'
   let enforcedModel = 'deepseek-chat'
   if (id === 'gpt-plus') {
-    baseUrl = 'https://api.openai.com/v1'
+    baseUrl = 'https://aigocode.com/v1'
     enforcedModel = 'gpt-4o'
     localStorage.setItem('apiKey', 'sk-7c22836d86108bbca8f5d6f14855fe9bf41e980b6273e83548a199a389ea920a')
   } else {
