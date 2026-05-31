@@ -41,9 +41,10 @@
         </div>
 
         <div class="input-group">
-          <div class="url-input-wrapper">
+          <div class="url-input-wrapper" @click="focusInput">
             <el-icon class="search-icon"><Link /></el-icon>
             <input 
+              ref="prUrlInputRef"
               v-model="prUrl" 
               type="text" 
               placeholder="e.g. https://github.com/google/ai-pr-reviewer/pull/42" 
@@ -254,10 +255,17 @@ const t = {
 }
 
 const prUrl = ref('')
+const prUrlInputRef = ref(null)
 const loading = ref(false)
 const reviewData = ref(null)
 const radarChartRef = ref(null)
 let myChart = null
+
+const focusInput = () => {
+  if (prUrlInputRef.value) {
+    prUrlInputRef.value.focus()
+  }
+}
 
 const selectedModelId = ref('deepseek-v3')
 const showExportMenu = ref(false)
@@ -692,6 +700,7 @@ onUnmounted(() => {
   border-radius: 8px;
   padding: 0 15px;
   transition: all 0.3s;
+  cursor: text;
 }
 
 .url-input-wrapper:focus-within {
