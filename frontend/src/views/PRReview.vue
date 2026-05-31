@@ -695,6 +695,7 @@ onUnmounted(() => {
   flex: 1;
   display: flex;
   align-items: center;
+  height: 48px;
   background: rgba(10, 15, 30, 0.8);
   border: 1px solid rgba(0, 240, 255, 0.2);
   border-radius: 8px;
@@ -712,6 +713,9 @@ onUnmounted(() => {
   color: #00f0ff;
   font-size: 18px;
   margin-right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cyber-input {
@@ -720,8 +724,12 @@ onUnmounted(() => {
   color: #f8fafc;
   font-size: 14px;
   width: 100%;
-  padding: 12px 0;
+  height: 100%;
+  padding: 0;
+  margin: 0;
   outline: none;
+  font-family: inherit;
+  line-height: normal;
 }
 
 .cyber-btn {
@@ -731,6 +739,7 @@ onUnmounted(() => {
   border-radius: 8px;
   cursor: pointer;
   padding: 0 25px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
