@@ -713,7 +713,7 @@ onUnmounted(() => {
   color: #00f0ff;
   font-size: 18px;
   margin-right: 12px;
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
 }
@@ -723,13 +723,15 @@ onUnmounted(() => {
   border: none;
   color: #f8fafc;
   font-size: 14px;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   height: 100%;
   padding: 0;
   margin: 0;
   outline: none;
   font-family: inherit;
-  line-height: normal;
+  line-height: 48px; /* Force browser to vertically center text exactly in the middle of 48px */
+  box-sizing: border-box !important;
 }
 
 .cyber-btn {
