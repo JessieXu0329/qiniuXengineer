@@ -387,7 +387,7 @@ const startAnalysis = () => {
   }, 1200)
 }
 
-const initRadarChart = () => {
+const initRadarChart = (isPrint = false) => {
   if (!radarChartRef.value) return
   
   if (myChart) {
@@ -398,7 +398,7 @@ const initRadarChart = () => {
   const option = {
     backgroundColor: 'transparent',
     tooltip: {
-      show: true,
+      show: !isPrint,
       trigger: 'item',
       backgroundColor: 'rgba(9, 15, 29, 0.95)',
       borderColor: '#00f0ff',
@@ -433,23 +433,24 @@ const initRadarChart = () => {
         { name: t[currentLang.value].t4, max: 100 }
       ],
       axisName: {
-        color: '#94a3b8',
+        color: isPrint ? '#0f172a' : '#94a3b8',
         fontSize: 12,
-        fontFamily: 'JetBrains Mono'
+        fontFamily: 'JetBrains Mono',
+        fontWeight: isPrint ? 'bold' : 'normal'
       },
       splitArea: {
         areaStyle: {
-          color: ['rgba(0, 240, 255, 0.02)', 'rgba(0, 240, 255, 0.05)']
+          color: isPrint ? ['rgba(0, 0, 0, 0.01)', 'rgba(0, 0, 0, 0.03)'] : ['rgba(0, 240, 255, 0.02)', 'rgba(0, 240, 255, 0.05)']
         }
       },
       splitLine: {
         lineStyle: {
-          color: 'rgba(0, 240, 255, 0.15)'
+          color: isPrint ? 'rgba(15, 23, 42, 0.12)' : 'rgba(0, 240, 255, 0.15)'
         }
       },
       axisLine: {
         lineStyle: {
-          color: 'rgba(0, 240, 255, 0.15)'
+          color: isPrint ? 'rgba(15, 23, 42, 0.12)' : 'rgba(0, 240, 255, 0.15)'
         }
       }
     },
@@ -470,23 +471,24 @@ const initRadarChart = () => {
             symbolSize: 6,
             label: {
               show: true,
-              color: '#00f0ff',
+              color: isPrint ? '#0f172a' : '#00f0ff',
               fontFamily: 'JetBrains Mono',
-              fontSize: 10,
+              fontSize: 10.5,
+              fontWeight: 'bold',
               formatter: function (params) {
                 return params.value + '%';
               }
             },
             itemStyle: {
-              color: '#00f0ff'
+              color: isPrint ? '#0369a1' : '#00f0ff'
             },
             areaStyle: {
-              color: 'rgba(0, 240, 255, 0.25)'
+              color: isPrint ? 'rgba(3, 105, 161, 0.15)' : 'rgba(0, 240, 255, 0.25)'
             },
             lineStyle: {
-              color: '#00f0ff',
+              color: isPrint ? '#0369a1' : '#00f0ff',
               width: 2,
-              shadowBlur: 8,
+              shadowBlur: isPrint ? 0 : 8,
               shadowColor: '#00f0ff'
             }
           }
