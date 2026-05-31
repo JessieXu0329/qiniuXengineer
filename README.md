@@ -1,5 +1,7 @@
 # 🤖 AI PR Reviewer - 智能代码评审助手
 
+演示视频demo： https://b23.tv/LAs8hzI
+
 > **基于 Go Gin 后端与 Vue 3 / Vite 前端构建的高颜值、全功能 AI 代码合并请求审计与健康度量平台。**
 
 本系统专为研发团队打造，通过整合 AST 抽象语法树与大语言模型（LLM）的混合上下文（Hybrid Context）检索能力，对 GitHub Pull Requests、Commits 和 Compare 分支差异进行深度的静态安全审计、性能瓶颈诊断以及规范性检查，并在仪表盘中可视化呈现项目整体健康指标。
