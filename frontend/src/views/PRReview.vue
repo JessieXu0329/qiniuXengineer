@@ -1,4 +1,5 @@
 <template>
+  <!-- AI PR Review Assistant - High-Fidelity Professional Edition -->
   <div class="pr-review-page animate-fade-in">
     <!-- Top Header -->
     <div class="welcome-banner">
