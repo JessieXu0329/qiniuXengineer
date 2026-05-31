@@ -14,7 +14,7 @@
       <div class="system-status">
         <!-- Premium language switch button in top-right corner -->
         <button class="lang-toggle-btn" @click="toggleLang">
-          <el-icon><Compass /></el-icon>
+          <span class="lang-pulse-dot"></span>
           <span>{{ currentLang === 'zh' ? 'ENGLISH' : '中文' }}</span>
         </button>
 
@@ -265,6 +265,16 @@ body {
   transform: translateY(-1px);
 }
 
+.lang-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #00f0ff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00f0ff, 0 0 15px #00f0ff;
+  animation: pulse-cyan 1.8s infinite;
+  display: inline-block;
+}
+
 .status-item {
   display: flex;
   align-items: center;
@@ -431,6 +441,12 @@ body {
 @keyframes pulse {
   0% { transform: scale(1); opacity: 0.9; }
   50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 15px #00ff66, 0 0 25px #00ff66; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+@keyframes pulse-cyan {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff; }
   100% { transform: scale(1); opacity: 0.9; }
 }
 
