@@ -58,15 +58,7 @@
           </nav>
         </div>
 
-        <div class="menu-section">
-          <div class="section-title">{{ t[currentLang].sec2 }}</div>
-          <nav class="menu-list">
-            <router-link to="/config" class="menu-item" active-class="active">
-              <el-icon><Setting /></el-icon>
-              <span>{{ t[currentLang].config }}</span>
-            </router-link>
-          </nav>
-        </div>
+
 
         <!-- Cyber user info profile -->
         <div class="cyber-profile">

@@ -39,11 +39,6 @@ const router = createRouter({
       path: '/false-positive',
       name: 'false-positive',
       component: () => import('./views/FalsePositive.vue')
-    },
-    {
-      path: '/config',
-      name: 'config',
-      component: () => import('./views/EngineConfig.vue')
     }
   ]
 })

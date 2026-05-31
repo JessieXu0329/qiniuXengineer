@@ -19,6 +19,27 @@
         <h3>{{ t[currentLang].inputTitle }}</h3>
         <p class="subtitle">{{ t[currentLang].inputSub }}</p>
         
+        <!-- Futuristic LLM Engine Selector -->
+        <div class="engine-selector">
+          <span class="selector-label">{{ currentLang === 'zh' ? '审计引擎大脑:' : 'AUDIT ENGINE BRAIN:' }}</span>
+          <div class="engine-tabs">
+            <button 
+              :class="['engine-tab-btn', { active: selectedModelId === 'deepseek-v3' }]"
+              @click="switchModel('deepseek-v3')"
+            >
+              <span class="pulse-cyan" v-if="selectedModelId === 'deepseek-v3'"></span>
+              <span>DeepSeek-V3 (Standard)</span>
+            </button>
+            <button 
+              :class="['engine-tab-btn', { active: selectedModelId === 'deepseek-r1' }]"
+              @click="switchModel('deepseek-r1')"
+            >
+              <span class="pulse-cyan" v-if="selectedModelId === 'deepseek-r1'"></span>
+              <span>DeepSeek-R1 (Reasoning)</span>
+            </button>
+          </div>
+        </div>
+
         <div class="input-group">
           <div class="url-input-wrapper">
             <el-icon class="search-icon"><Link /></el-icon>
@@ -216,6 +237,20 @@ const loading = ref(false)
 const reviewData = ref(null)
 const radarChartRef = ref(null)
 let myChart = null
+
+const selectedModelId = ref('deepseek-v3')
+
+const switchModel = (id) => {
+  selectedModelId.value = id
+  let baseUrl = 'https://api.deepseek.com/v1'
+  let enforcedModel = 'deepseek-chat'
+  if (id === 'deepseek-r1') {
+    enforcedModel = 'deepseek-reasoner'
+  }
+  localStorage.setItem('baseUrl', baseUrl)
+  localStorage.setItem('enforcedModel', enforcedModel)
+  localStorage.setItem('selectedModelId', id)
+}
 
 const currentTime = ref(new Date().toLocaleTimeString())
 setInterval(() => {
@@ -455,6 +490,12 @@ const copyCode = (text, event) => {
 }
 
 onMounted(async () => {
+  if (localStorage.getItem('selectedModelId')) {
+    selectedModelId.value = localStorage.getItem('selectedModelId')
+  } else {
+    switchModel('deepseek-v3')
+  }
+
   const taskId = route.query.id
   if (taskId) {
     loading.value = true
@@ -946,5 +987,84 @@ onMounted(async () => {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Engine Selector Tabs style */
+.engine-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.selector-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #475569;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.engine-tabs {
+  display: flex;
+  background: rgba(9, 15, 29, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.engine-tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12.5px;
+  font-weight: bold;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.engine-tab-btn:hover {
+  color: #00f0ff;
+}
+
+.engine-tab-btn.active {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(112, 0, 255, 0.05) 100%);
+  border-color: rgba(0, 240, 255, 0.4);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+.pulse-cyan {
+  width: 6px;
+  height: 6px;
+  background-color: #00f0ff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00f0ff;
+}
+
+@media (max-width: 576px) {
+  .engine-selector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .engine-tabs {
+    width: 100%;
+  }
+  .engine-tab-btn {
+    flex: 1;
+    justify-content: center;
+    font-size: 11.5px;
+    padding: 6px 8px;
+  }
 }
 </style>
