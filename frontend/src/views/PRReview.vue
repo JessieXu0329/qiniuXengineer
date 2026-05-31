@@ -1290,13 +1290,34 @@ onUnmounted(() => {
   h4 {
     font-size: 13px !important;
     color: #475569 !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 8px !important;
   }
 
-  .summary-text, .card-reason {
+  .summary-text {
     color: #334155 !important;
     font-size: 13px !important;
     line-height: 1.6 !important;
+  }
+
+  .cyber-tag {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+  }
+
+  .warning-box {
+    background: #fef2f2 !important;
+    border: 1px solid #fca5a5 !important;
+    color: #991b1b !important;
+    padding: 15px !important;
+    border-radius: 6px !important;
+  }
+
+  .warning-box h4,
+  .warning-box ul,
+  .warning-box li {
+    color: #991b1b !important;
   }
 
   /* 6. Score pills design for printing */
@@ -1315,54 +1336,107 @@ onUnmounted(() => {
     text-shadow: none !important;
   }
 
+  .score-pill .val.highlight {
+    color: #0369a1 !important; /* High contrast blue */
+  }
+
+  .score-pill .val.performance {
+    color: #047857 !important; /* High contrast green */
+  }
+
+  .score-pill .val.security {
+    color: #b91c1c !important; /* High contrast red */
+  }
+
   /* 7. Timeline & Inline Cards constraints */
   .review-inline-card {
     background: #f8fafc !important;
     border: 1px solid #e2e8f0 !important;
-    border-left: 4px solid #cbd5e1 !important;
-    color: #000000 !important;
+    border-left: 5px solid #64748b !important;
+    color: #0f172a !important;
     page-break-inside: avoid !important;
   }
   
   .review-inline-card.critical {
-    border-left: 4px solid #ef4444 !important;
+    border-left-color: #dc2626 !important; /* Formal red border */
   }
   
   .review-inline-card.warning {
-    border-left: 4px solid #f59e0b !important;
+    border-left-color: #d97706 !important; /* Formal amber border */
   }
   
   .review-inline-card.suggestion {
-    border-left: 4px solid #3b82f6 !important;
+    border-left-color: #059669 !important; /* Formal green border */
   }
 
-  .card-meta .level-text {
-    font-weight: 850 !important;
+  .card-level {
+    font-size: 11px !important;
+    font-weight: bold !important;
+  }
+
+  .critical .card-level { color: #dc2626 !important; }
+  .warning .card-level { color: #d97706 !important; }
+  .suggestion .card-level { color: #059669 !important; }
+
+  .card-meta .dot {
+    display: none !important; /* Hide neon dots inside PDF */
+  }
+
+  .card-file-line .file {
+    color: #475569 !important;
+    font-weight: bold !important;
+  }
+
+  .card-file-line .line {
+    color: #0f172a !important;
+    background: #e2e8f0 !important;
+    border: 1px solid #cbd5e1 !important;
+    font-weight: bold !important;
+    padding: 1px 6px !important;
+  }
+
+  .card-reason {
+    color: #1e293b !important;
+    font-size: 13.5px !important;
+    line-height: 1.6 !important;
   }
 
   /* Code suggestion boxes */
   .suggested-code-box {
-    background: #f1f5f9 !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #0f172a !important;
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
     page-break-inside: avoid !important;
+  }
+
+  .code-header {
+    background: #e2e8f0 !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
   }
 
   pre.code-content {
     background: #f8fafc !important;
-    border: 1px solid #cbd5e1 !important;
+    border: none !important;
+    padding: 12px !important;
+    margin: 0 !important;
+    white-space: pre-wrap !important;
+  }
+
+  pre.code-content code {
     color: #0f172a !important;
     font-family: "JetBrains Mono", Courier, monospace !important;
-    font-size: 11px !important;
-    white-space: pre-wrap !important;
+    font-size: 11.5px !important;
+    line-height: 1.5 !important;
   }
 
   /* 8. ECharts Radar Chart Page constraints */
   .radar-chart-container {
     height: 280px !important;
     width: 100% !important;
-    border: 1px solid #f1f5f9 !important;
-    background: #fafafa !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #f8fafc !important;
     page-break-inside: avoid !important;
   }
 
