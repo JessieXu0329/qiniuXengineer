@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/aipr/ai-pr-reviewer/controller"
@@ -77,15 +78,22 @@ func main() {
 		v1.GET("/review/dashboard", reviewController.GetDashboard)
 	}
 
-	log.Println("[INFO] Cyber-engine Backend listening on port :8080...")
-	if err := r.Run(":8080"); err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Printf("[INFO] Cyber-engine Backend listening on port :%s...", port)
+	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("[FATAL] Server startup failed: %v", err)
 	}
 }
 
 func initInfrastructure() {
-	// Connect to local native MySQL at 127.0.0.1:3306
-	dsn := "aipr_user:aipr_password@tcp(127.0.0.1:3306)/aipr_db?charset=utf8mb4&parseTime=True&loc=Local"
+	// Connect to MySQL. Read DSN from DATABASE_URL env var, otherwise use defaults.
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		dsn = "aipr_user:aipr_password@tcp(127.0.0.1:3306)/aipr_db?charset=utf8mb4&parseTime=True&loc=Local"
+	}
 	log.Println("[CONNECT] Connecting to MySQL database...")
 	
 	// Create context with short timeout
@@ -127,12 +135,16 @@ func initInfrastructure() {
 		log.Println("[WARNING] MySQL connection timeout. Review persistence and dashboard metrics are disabled.")
 	}
 
-	// Connect to local Redis at 127.0.0.1:6379
+	// Connect to Redis. Read addr from REDIS_URL env var, otherwise use default.
+	redisAddr := os.Getenv("REDIS_URL")
+	if redisAddr == "" {
+		redisAddr = "127.0.0.1:6379"
+	}
 	log.Println("[CONNECT] Connecting to Redis...")
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:6379",
-		Password: "", // No password by default
-		DB:       0,  // default DB
+		Addr:     redisAddr,
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       0,
 	})
 
 	redisStatus := rdb.Ping(ctx)
