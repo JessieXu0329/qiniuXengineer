@@ -57,9 +57,7 @@
                     <td><code class="match-code">{{ rule.pattern }}</code></td>
                     <td><span :class="['severity-badge', rule.type]">{{ t('filter.types.' + rule.type) }}</span></td>
                     <td class="center">
-                      <button @click="deleteRule(index)" class="action-btn delete">
-                        <el-icon><Delete /></el-icon>
-                      </button>
+                      <button @click="deleteRule(index)" class="action-btn delete-btn">DELETE</button>
                     </td>
                   </tr>
                   <tr v-if="rules.length === 0">
@@ -431,13 +429,25 @@ const deleteRule = (index) => {
   transition: all 0.2s;
 }
 
-.action-btn.delete {
-  color: #f87171;
+.delete-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.action-btn.delete:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #fca5a5;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
 }
 
 .center {

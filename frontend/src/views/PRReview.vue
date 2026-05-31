@@ -23,7 +23,7 @@
         <div class="engine-selector">
           <span class="selector-label">{{ t('review.engineLabel') }}</span>
           <div class="engine-tabs">
-            <button 
+            <button
               :class="['engine-tab-btn', { active: selectedModelId === 'deepseek-v3' }]"
               @click="switchModel('deepseek-v3')"
             >
@@ -154,7 +154,7 @@
                 <div class="card-meta">
                   <div class="card-level">
                     <span class="dot"></span>
-                    <span class="level-text">{{ card.level }}</span>
+                    <span class="level-text">{{ t('review.levels.' + card.level.toLowerCase()) }}</span>
                   </div>
                   <div class="card-file-line">
                     <span class="file">{{ card.file }}</span>
@@ -213,7 +213,7 @@ const focusInput = () => {
 const selectedModelId = ref('deepseek-v3')
 const showExportMenu = ref(false)
 
-const switchModel = () => {
+const switchModel = (id) => {
   selectedModelId.value = 'deepseek-v3'
   localStorage.setItem('baseUrl', 'https://api.deepseek.com/v1')
   localStorage.setItem('enforcedModel', 'deepseek-chat')
@@ -494,11 +494,7 @@ const closeExportMenu = () => {
 onMounted(async () => {
   window.addEventListener('click', closeExportMenu)
 
-  const savedModel = localStorage.getItem('selectedModelId')
-  if (savedModel && savedModel !== 'deepseek-v3') {
-    localStorage.removeItem('selectedModelId')
-  }
-  switchModel()
+  switchModel('deepseek-v3')
 
   const taskId = route.query.id
   if (taskId) {
@@ -804,6 +800,8 @@ onUnmounted(() => {
   line-height: 1.5;
   color: #cbd5e1;
   margin: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .tags-group {
@@ -898,8 +896,10 @@ onUnmounted(() => {
 .card-meta {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .card-level {
@@ -909,6 +909,7 @@ onUnmounted(() => {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 .critical .card-level { color: #ef4444; }
@@ -928,6 +929,8 @@ onUnmounted(() => {
 .card-file-line {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .card-file-line .file {
@@ -947,6 +950,8 @@ onUnmounted(() => {
   line-height: 1.5;
   color: #cbd5e1;
   margin-bottom: 15px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Suggested Code Fragment Box */
@@ -992,7 +997,10 @@ onUnmounted(() => {
 .code-content {
   margin: 0;
   padding: 12px;
-  overflow-x: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: break-word;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   line-height: 1.6;

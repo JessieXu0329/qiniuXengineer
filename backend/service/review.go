@@ -62,12 +62,16 @@ type LLMCommentPart struct {
 }
 
 type DashboardResponse struct {
-	TotalReviews     int64              `json:"total_reviews"`
-	AverageScore     float64            `json:"average_score"`
-	CriticalIssues   int64              `json:"critical_issues"`
-	WarningIssues    int64              `json:"warning_issues"`
-	SuggestionIssues int64              `json:"suggestion_issues"`
-	RecentReviews    []RecentReviewItem `json:"recent_reviews"`
+	TotalReviews        int64              `json:"total_reviews"`
+	AverageScore        float64            `json:"average_score"`
+	AvgNormativeScore   float64            `json:"avg_normative_score"`
+	AvgSecurityScore    float64            `json:"avg_security_score"`
+	AvgPerformanceScore float64            `json:"avg_performance_score"`
+	AvgReadabilityScore float64            `json:"avg_readability_score"`
+	CriticalIssues      int64              `json:"critical_issues"`
+	WarningIssues       int64              `json:"warning_issues"`
+	SuggestionIssues    int64              `json:"suggestion_issues"`
+	RecentReviews       []RecentReviewItem `json:"recent_reviews"`
 }
 
 type RecentReviewItem struct {
@@ -223,13 +227,17 @@ func (s *ReviewService) GetDashboard() (*DashboardResponse, error) {
 		return nil, fmt.Errorf("failed to count suggestion issues: %w", err)
 	}
 
-	var scoreSum float64
+	var scoreSum, normSum, secSum, perfSum, readSum float64
 	var scoredCount float64
 	recentReviews := make([]RecentReviewItem, 0, len(tasks))
 	for _, task := range tasks {
-		score := extractOverallScore(task.Summary)
+			score, norm, sec, perf, read := extractAllScores(task.Summary)
 		if score > 0 {
 			scoreSum += score
+					normSum += norm
+			secSum += sec
+			perfSum += perf
+			readSum += read
 			scoredCount++
 		}
 
@@ -242,14 +250,22 @@ func (s *ReviewService) GetDashboard() (*DashboardResponse, error) {
 		})
 	}
 
-	var averageScore float64
+	var averageScore, avgNorm, avgSec, avgPerf, avgRead float64
 	if scoredCount > 0 {
 		averageScore = scoreSum / scoredCount
+				avgNorm = normSum / scoredCount
+		avgSec = secSum / scoredCount
+		avgPerf = perfSum / scoredCount
+		avgRead = readSum / scoredCount
 	}
 
 	return &DashboardResponse{
 		TotalReviews:     totalReviews,
 		AverageScore:     averageScore,
+				AvgNormativeScore:   avgNorm,
+		AvgSecurityScore:    avgSec,
+		AvgPerformanceScore: avgPerf,
+		AvgReadabilityScore: avgRead,
 		CriticalIssues:   criticalIssues,
 		WarningIssues:    warningIssues,
 		SuggestionIssues: suggestionIssues,
@@ -317,11 +333,13 @@ DO NOT include any markdown code blocks like ` + "`" + "```json" + "`" + `, DO N
     "file": "string (filename)",
     "line": int (line number),
     "level": "string (MUST BE EXACTLY ONE OF THESE: CRITICAL, WARNING, SUGGESTION)",
-    "reason": "string (concise bug description in English)",
-    "reason_zh": "string (concise bug description in Chinese)",
+    "reason": "string (concise bug description in English — mandatory)",
+    "reason_zh": "string (concise bug description in Chinese — MANDATORY, NOT empty, NOT omitted)",
     "suggested_code": "string (exact fix code snippet)"
   }
 ]
+
+[BILINGUAL ENFORCEMENT]: Both "reason" AND "reason_zh" MUST be non-empty strings for every entry. Submitting an empty "reason_zh" or omitting it entirely is INVALID. Write the Chinese description even if you are less confident — a rough Chinese translation is better than an empty field.
 
 [EXAMPLE OF VALID OUTPUT - FOLLOW THIS EXACTLY]:
 [{"file":"main.go","line":12,"level":"CRITICAL","reason":"Hardcoded credentials found.","reason_zh":"发现硬编码凭据。","suggested_code":"pass := os.Getenv(\"DB_PASS\")"}]`
@@ -338,6 +356,14 @@ DO NOT include any markdown code blocks like ` + "`" + "```json" + "`" + `, DO N
 		return nil, fmt.Errorf("failed to parse AI comment JSON array: %w", err)
 	}
 
+	// Validate and backfill missing Chinese translations
+	for i := range comments {
+		if strings.TrimSpace(comments[i].ReasonZh) == "" {
+			log.Printf("[WARN] LLM returned empty reason_zh for %s:%d — falling back to English", comments[i].File, comments[i].Line)
+			comments[i].ReasonZh = comments[i].Reason
+		}
+	}
+
 	return comments, nil
 }
 
@@ -348,16 +374,17 @@ Return a raw JSON object only, with no markdown, no code fences, and no explanat
 The object must match:
 {
   "one_sentence_summary": "one sentence summary in English",
-  "one_sentence_summary_zh": "one sentence summary in Chinese (一句话改动概述)",
+  "one_sentence_summary_zh": "one sentence summary in Chinese — MANDATORY, NOT empty (一句话改动概述)",
   "affected_modules": ["changed/file.ext"],
-  "breaking_changes": ["breaking change in English"],
-  "breaking_changes_zh": ["breaking change in Chinese (破坏性变更说明)"],
+  "breaking_changes": ["breaking change description"],
+  "breaking_changes_zh": ["breaking change description in Chinese - same length as breaking_changes, MANDATORY (破坏性变更说明)"],
   "overall_score": 90,
   "normative_score": 90,
   "security_score": 90,
   "performance_score": 90,
   "readability_score": 90
 }
+[BILINGUAL ENFORCEMENT]: one_sentence_summary_zh MUST be a non-empty Chinese sentence. The breaking_changes_zh array MUST have the SAME number of entries as breaking_changes, each entry being a non-empty Chinese translation. An empty Chinese field is INVALID — write even a rough translation.
 The one_sentence_summary and one_sentence_summary_zh fields must be exactly one sentence. Scores must be numbers from 0 to 100.`
 
 	userPrompt := fmt.Sprintf("Generate a one-sentence PR summary and score object for this diff and these review comments.\n\nReview comments JSON:\n%s\n\nGit diff:\n%s", string(commentsBytes), diffContent)
@@ -371,6 +398,23 @@ The one_sentence_summary and one_sentence_summary_zh fields must be exactly one 
 	if err := json.Unmarshal([]byte(cleanContent), &summary); err != nil {
 		log.Printf("[ERROR] failed to parse LLM summary. Raw: %s", rawContent)
 		return nil, fmt.Errorf("failed to parse AI summary JSON object: %w", err)
+	}
+
+	// Validate and backfill missing Chinese translations in summary
+	if strings.TrimSpace(summary.OneSentenceSummaryZh) == "" {
+		log.Printf("[WARN] LLM returned empty one_sentence_summary_zh — falling back to English")
+		summary.OneSentenceSummaryZh = summary.OneSentenceSummary
+	}
+	if len(summary.BreakingChangesZh) != len(summary.BreakingChanges) {
+		log.Printf("[WARN] LLM returned mismatched breaking_changes_zh length (%d vs %d) — falling back to English", len(summary.BreakingChangesZh), len(summary.BreakingChanges))
+		summary.BreakingChangesZh = make([]string, len(summary.BreakingChanges))
+		copy(summary.BreakingChangesZh, summary.BreakingChanges)
+	} else {
+		for i := range summary.BreakingChangesZh {
+			if strings.TrimSpace(summary.BreakingChangesZh[i]) == "" {
+				summary.BreakingChangesZh[i] = summary.BreakingChanges[i]
+			}
+		}
 	}
 
 	return &summary, nil
@@ -461,4 +505,18 @@ func extractOverallScore(summary string) float64 {
 		return 0
 	}
 	return payload.OverallScore
+}
+
+func extractAllScores(summary string) (overall, normative, security, performance, readability float64) {
+	var payload struct {
+		OverallScore     float64 `json:"overall_score"`
+		NormativeScore   float64 `json:"normative_score"`
+		SecurityScore    float64 `json:"security_score"`
+		PerformanceScore float64 `json:"performance_score"`
+		ReadabilityScore float64 `json:"readability_score"`
+	}
+	if err := json.Unmarshal([]byte(summary), &payload); err != nil {
+		return 0, 0, 0, 0, 0
+	}
+	return payload.OverallScore, payload.NormativeScore, payload.SecurityScore, payload.PerformanceScore, payload.ReadabilityScore
 }

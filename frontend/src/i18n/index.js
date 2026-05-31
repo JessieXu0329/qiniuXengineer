@@ -78,6 +78,12 @@ const messages = {
       t2: '安全性',
       t3: '性能',
       t4: '可读性',
+      // Level labels
+      levels: {
+        critical: '致命',
+        warning: '警告',
+        suggestion: '建议'
+      },
       // Misc
       clockReady: '扫描引擎就绪',
       engineLabel: '审计引擎大脑:',
@@ -256,6 +262,11 @@ const messages = {
       t2: 'Security',
       t3: 'Performance',
       t4: 'Readability',
+      levels: {
+        critical: 'CRITICAL',
+        warning: 'WARNING',
+        suggestion: 'SUGGESTION'
+      },
       clockReady: 'SCAN ENGINE READY',
       engineLabel: 'AUDIT ENGINE BRAIN:',
       line: 'Line',

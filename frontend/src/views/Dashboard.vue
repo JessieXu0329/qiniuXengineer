@@ -120,12 +120,8 @@ const stats = ref([
   { key: 'contextRetrievals', value: "1,482", colorClass: "yellow" }
 ])
 
-const recentReviews = ref([
-  { id: 1, pr_url: "https://github.com/gin-gonic/gin/pull/3534", score: 94.0, status: "completed", date: "2026-05-29" },
-  { id: 2, pr_url: "https://github.com/google/ai-pr-reviewer/pull/42", score: 82.5, status: "completed", date: "2026-05-29" },
-  { id: 3, pr_url: "https://github.com/JessieXu0329/qingjiaotongxing/pull/1", score: 89.0, status: "completed", date: "2026-05-28" },
-  { id: 4, pr_url: "https://github.com/example/repo/pull/18", score: 75.0, status: "completed", date: "2026-05-27" }
-])
+const recentReviews = ref([])
+const radarData = ref([0, 0, 0, 0])
 
 const router = useRouter()
 
@@ -150,7 +146,13 @@ onMounted(async () => {
       stats.value[0].value = data.total_reviews.toString()
       stats.value[1].value = data.average_score.toFixed(1)
       stats.value[2].value = data.critical_issues.toString()
-      if (data.recent_reviews && data.recent_reviews.length > 0) {
+      radarData.value = [
+        data.avg_normative_score || 0,
+        data.avg_security_score || 0,
+        data.avg_performance_score || 0,
+        data.avg_readability_score || 0
+      ]
+      if (data.recent_reviews) {
         recentReviews.value = data.recent_reviews
       }
     }
@@ -195,7 +197,7 @@ const initRadarChart = () => {
         for (let i = 0; i < indicators.length; i++) {
           html += `<div style="display: flex; justify-content: space-between; gap: 20px; margin: 4px 0;">
             <span style="color: #94a3b8;">${indicators[i]}:</span>
-            <span style="font-weight: bold; color: #00ff66;">${params.value[i]}%</span>
+            <span style="font-weight: bold; color: #00ff66;">${params.value[i].toFixed(2)}%</span>
           </div>`;
         }
         return html;
@@ -235,7 +237,7 @@ const initRadarChart = () => {
         type: 'radar',
         data: [
           {
-            value: [88.5, 82.0, 85.0, 90.5], // Average quality vectors
+            value: radarData.value, // Average quality vectors from API
             name: t('dashboard.radarSeriesName'),
             symbol: 'circle',
             symbolSize: 6,
@@ -245,7 +247,7 @@ const initRadarChart = () => {
               fontFamily: 'JetBrains Mono',
               fontSize: 10,
               formatter: function (params) {
-                return params.value + '%';
+                return params.value.toFixed(2) + '%';
               }
             },
             itemStyle: {
