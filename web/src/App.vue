@@ -266,13 +266,14 @@ body {
 }
 
 .lang-pulse-dot {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   background-color: #00f0ff;
   border-radius: 50%;
-  box-shadow: 0 0 8px #00f0ff, 0 0 15px #00f0ff;
-  animation: pulse-cyan 1.8s infinite;
+  box-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+  animation: pulse-cyan-subtle 2s infinite ease-in-out;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .status-item {
@@ -444,10 +445,10 @@ body {
   100% { transform: scale(1); opacity: 0.9; }
 }
 
-@keyframes pulse-cyan {
-  0% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff; }
-  100% { transform: scale(1); opacity: 0.9; }
+@keyframes pulse-cyan-subtle {
+  0% { opacity: 0.5; box-shadow: 0 0 3px rgba(0, 240, 255, 0.4); }
+  50% { opacity: 1; box-shadow: 0 0 7px rgba(0, 240, 255, 0.9); }
+  100% { opacity: 0.5; box-shadow: 0 0 3px rgba(0, 240, 255, 0.4); }
 }
 
 @media (max-width: 1200px) {
